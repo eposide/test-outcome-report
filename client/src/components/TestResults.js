@@ -3,14 +3,14 @@ import { ApplicationContext } from "./ApplicationContext";
 import TestSuite from "./TestSuite";
 
 const TestResults = () => {
-  const { testResults } = useContext(ApplicationContext);
+  const { testResults, jobNo } = useContext(ApplicationContext);
 
   // Display test results here using the TestSuite component
   return (
     <div>
       <h2>Test Results</h2>
-      {testResults.length > 0 ? (
-        testResults.map((suite, index) => <TestSuite key={index} suite={suite} />)
+      {Array.isArray(testResults) && testResults.length > 0 ? (
+        testResults.map((suite, index) => <TestSuite key={suite.id} suite={suite} />)
       ) : (
         <p>No results available.</p>
       )}

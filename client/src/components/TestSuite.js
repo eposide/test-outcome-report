@@ -2,7 +2,6 @@ import React from "react";
 import TestSpec from "./TestSpec";
 
 const TestSuite = ({ suite }) => {
-  console.log("suite :" + suite);
   return (
     <div>
       <h3>Suite: {suite.title}</h3>

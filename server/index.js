@@ -38,11 +38,28 @@ app.use(cors({
 }));
 
 app.get('/api/results/:jobNo', async (req, res) => {
-    const { jobNo } = req.params;
+    const jobNo  = req.params.jobNo;
     try {
+        console.log("jobNo:" +jobNo);
         //TODO: ignoring the jobNo for now just testing
-        const data = await fs.readFile(`/temp/testresults/69/archive/JAVASCRIPT/fan-pw-test-add-legal-note-life/results.json`, 'utf-8');
-        res.json(JSON.parse(data));
+        testResultFiles = [];
+        const directory = '/temp/testresults/' + jobNo + '/archive';
+        await searchFiles(directory, 'results.json')
+
+        console.log(`Found ${testResultFiles.length} test result files`);
+
+        //const data = await fs.readFile(`/temp/testresults/69/archive/JAVASCRIPT/fan-pw-test-add-legal-note-life/results.json`, 'utf-8');
+        //res.json(JSON.parse(data));
+        const resultPromises = testResultFiles.map(async (file) =>  {
+            console.log(`Reading file: ${file}`);
+            const data = await fs.readFile(file, 'utf-8');
+            return JSON.parse(data);
+        });
+
+        const results = await Promise.all(resultPromises);
+        
+        res.json(results);
+
     } catch (error) {
         res.status(500).send({ error: 'Unable to fetch test results' });
     }
@@ -73,6 +90,22 @@ app.get('/api/results', async (req, res) => {
         res.status(500).send({ error: 'Unable to fetch test results' });
     }
 });
+
+app.get('/api/testjobs', async (req, res) => {
+    try {
+        const files = await fs.readdir('/temp/testresults/');
+        console.log(files);
+        
+        
+        res.json(files);
+        
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ error: 'Unable to fetch test results' });
+    }
+});
+
 
 app.listen(3001, () => {
     console.log('Server running on http://localhost:30001');
