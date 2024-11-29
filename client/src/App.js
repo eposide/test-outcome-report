@@ -15,7 +15,7 @@ const App = () => {
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           return response.json();
         })
-        .then((data) => setTestResults(data[0]?.suites || []))
+        .then((data) => setTestResults(data))
         .catch((error) => console.error("Error fetching test results:", error));
     } else {
       const url = `${process.env.REACT_APP_API_URL}/api/testjobs`;
@@ -39,7 +39,7 @@ const App = () => {
   return (
     <div>
     
-    <ul className="nav nav-tabs">
+    <ul className="nav nav-tabs" style={{ color: 'grey'}}>
       {Array.isArray(testJobs) && testJobs.length > 0 ? (
          testJobs.map((testJob, index) => <TestJob key={testJob} jobNo={testJob} />)
       ) : (
@@ -48,7 +48,6 @@ const App = () => {
     </ul>
     {jobNo ? (
         <div>
-        <h1 className="header">Job Number: {jobNo}</h1>
             <TestResults />
         </div>
         ) : (

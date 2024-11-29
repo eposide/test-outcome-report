@@ -1,16 +1,16 @@
 import React, { useContext } from "react";
 import { ApplicationContext } from "./ApplicationContext";
-import TestSuite from "./TestSuite";
+import TestFile from "./TestFile";
 
 const TestResults = () => {
-  const { testResults, jobNo } = useContext(ApplicationContext);
+  const { testResults } = useContext(ApplicationContext);
 
+  console.log("TestResults" + testResults);
   // Display test results here using the TestSuite component
   return (
     <div>
-      <h2>Test Results</h2>
       {Array.isArray(testResults) && testResults.length > 0 ? (
-        testResults.map((suite, index) => <TestSuite key={suite.id} suite={suite} />)
+        testResults.map((result, index) => <TestFile key={result.id} result={result} />)
       ) : (
         <p>No results available.</p>
       )}

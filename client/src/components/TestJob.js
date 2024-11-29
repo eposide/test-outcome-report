@@ -7,7 +7,7 @@ const TestJob = ({ jobNo }) => {
   console.log(jobNo)
   // Display test job
   return (
-        <li><Button onClick={() => setJobNo(jobNo)}>{jobNo}</Button></li>
+        <li><Button variant="outline-secondary" onClick={() => setJobNo(jobNo)}>{jobNo}</Button></li>
   );
 };
 
