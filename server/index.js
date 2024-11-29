@@ -4,6 +4,8 @@ const app = express();
 const path = require('path');
 
 const cors = require('cors');
+require('dotenv').config();
+
 let testResultFiles = [];
 
 async function searchFiles(dir, fileName) {
@@ -43,7 +45,7 @@ app.get('/api/results/:jobNo', async (req, res) => {
         console.log("jobNo:" +jobNo);
      
         testResultFiles = [];
-        const directory = '/temp/testresults/' + jobNo + '/archive';
+        const directory = process.env.TEST_JOBS_LOCATION + jobNo + '/archive';
         await searchFiles(directory, 'results.json')
 
         console.log(`Found ${testResultFiles.length} test result files`);
