@@ -32,12 +32,6 @@ async function searchFiles(dir, fileName) {
     }
 }
 
-// Configure CORS
-app.use(cors({
-  origin: 'http://localhost:3000', // Replace with your React app's URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add allowed methods
-  credentials: true, // If cookies or other credentials are used
-}));
 
 app.get('/api/results/:jobNo', async (req, res) => {
     const jobNo  = req.params.jobNo;
@@ -67,10 +61,10 @@ app.get('/api/results/:jobNo', async (req, res) => {
 
 app.get('/api/results', async (req, res) => {
     try {
-        //const files = await fs.readdir('/temp/testresults/');
-        //console.log(files);
+        console.log("Fetching all test results");
         testResultFiles = [];
-        await searchFiles('/temp/testresults/', 'results.json')
+        
+        await searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json')
 
         console.log(`Found ${testResultFiles.length} test result files`);
 
@@ -93,10 +87,9 @@ app.get('/api/results', async (req, res) => {
 
 app.get('/api/testjobs', async (req, res) => {
     try {
-        const files = await fs.readdir('/temp/testresults/');
+        console.log("Fetching all test jobs");
+        const files = await fs.readdir(process.env.TEST_JOBS_LOCATION);
         console.log(files);
-        
-        
         res.json(files);
         
         
@@ -106,7 +99,13 @@ app.get('/api/testjobs', async (req, res) => {
     }
 });
 
+// Serve static files from the react app
+app.use(express.static(path.join(__dirname, 'client/build')));
 
-app.listen(3001, () => {
-    console.log('Server running on http://localhost:30001');
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build/index.html'));
 });
+
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
