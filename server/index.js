@@ -23,7 +23,6 @@ async function searchFiles(dir, fileName) {
             if (stats.isDirectory()) {
                 await searchFiles(filePath, fileName);
             } else if (stats.isFile() && filePath.includes(fileName)) {
-                console.log(`Found file: ${filePath}`);
                 testResultFiles.push(filePath);
             }
         }
@@ -36,16 +35,13 @@ async function searchFiles(dir, fileName) {
 app.get('/api/results/:jobNo', async (req, res) => {
     const jobNo  = req.params.jobNo;
     try {
-        console.log("jobNo:" +jobNo);
-     
+       
         testResultFiles = [];
         const directory = process.env.TEST_JOBS_LOCATION + jobNo + '/archive';
         await searchFiles(directory, 'results.json')
-
-        console.log(`Found ${testResultFiles.length} test result files`);
-
+       
         const resultPromises = testResultFiles.map(async (file) =>  {
-            console.log(`Reading file: ${file}`);
+           
             const data = await fs.readFile(file, 'utf-8');
             return {filePath: file, data: JSON.parse(data)};
         });
