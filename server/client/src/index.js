@@ -11,6 +11,7 @@ const root = createRoot(container);
 
 root.render(
   <ApplicationProvider>
+    <title>Playwright Test Outcome</title>
     <App />
   </ApplicationProvider>
 );

@@ -4,6 +4,7 @@ import TestJob from "./components/TestJob";
 import TestResults from "./components/TestResults";
 import Button from "react-bootstrap/Button";
 
+<title>My Blog</title>
 
 const App = () => {
   const { jobNo, setTestResults, setJobNo, setTestJobs, testJobs } = useContext(ApplicationContext);
@@ -44,7 +45,7 @@ const App = () => {
     
     <ul className="nav nav-tabs" style={{ color: 'grey'}}>
       <li>
-          <Button variant="outline-secondary" >Select a test job </Button>
+          <Button variant="outline-info" >Select a test job </Button>
         </li>
       {Array.isArray(testJobs) && testJobs.length > 0 ? (
          testJobs.map((testJob, index) => <TestJob key={testJob} jobNo={testJob} />)
