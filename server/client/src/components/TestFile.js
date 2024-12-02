@@ -16,7 +16,8 @@ const TestFile = ({ result }) => {
         style={{ backgroundColor: 'grey'}}
         onClick={toggleOpen} 
       >
-        Results file {result.filePath}
+        Results file : {result.filePath} | Duration : {result.data.stats['duration']} 
+        | StartTime : {result.data.stats['startTime']} | Expected : {result.data.stats['expected']}
       </div>
       <Collapse in={open}>
        <div className="card-body">
