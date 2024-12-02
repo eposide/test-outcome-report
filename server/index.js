@@ -59,31 +59,6 @@ app.get('/api/results/:jobNo', async (req, res) => {
     }
 });
 
-app.get('/api/results', async (req, res) => {
-    try {
-        console.log("Fetching all test results");
-        testResultFiles = [];
-        
-        await searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json')
-
-        console.log(`Found ${testResultFiles.length} test result files`);
-
-        const resultPromises = testResultFiles.map(async (file) =>  {
-            console.log(`Reading file: ${file}`);
-            const data = await fs.readFile(file, 'utf-8');
-            return JSON.parse(data);
-        });
-
-        const results = await Promise.all(resultPromises);
-        
-        res.json(results);
-        
-        
-    } catch (error) {
-        console.log(error);
-        res.status(500).send({ error: 'Unable to fetch test results' });
-    }
-});
 
 app.get('/api/testjobs', async (req, res) => {
     try {
