@@ -63,9 +63,15 @@ app.get('/api/results/:jobNo', async (req, res) => {
 app.get('/api/testjobs', async (req, res) => {
     try {
         console.log("Fetching all test jobs");
-        const files = await fs.readdir(process.env.TEST_JOBS_LOCATION);
-        console.log(files);
-        res.json(files);
+       // const files = await fs.readdir(process.env.TEST_JOBS_LOCATION);
+        const source = process.env.TEST_JOBS_LOCATION;
+        const directories = 
+            (await fs.readdir(source, {withFileTypes: true}))
+             .filter(dirent => dirent.isDirectory())
+             .map(dirent => dirent.name);
+
+        console.log(directories);
+        res.json(directories);
         
         
     } catch (error) {
