@@ -1,16 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import TestSuite from "./TestSuite";
-
+import { Collapse } from "react-bootstrap";
 
 const TestFile = ({ result }) => {
+
+  const [open, setOpen] = useState(false);
+
+  const toggleOpen = () => {
+    setOpen(!open);
+  };
+
   return (
-    <div class="card">
-      <div class="card-header" style={{ backgroundColor: 'grey'}} >Results file {result.filePath}</div>
-       <div class="card-body">
+    <div className="card">
+      <div className="card-header" 
+        style={{ backgroundColor: 'grey'}}
+        onClick={toggleOpen} 
+      >
+        Results file {result.filePath}
+      </div>
+      <Collapse in={open}>
+       <div className="card-body">
         {result.data.suites.map((suite, index) => (
-          <TestSuite key={index} suite={suite} />
+          <TestSuite key={ index } suite={ suite } />
         ))}
       </div>
+      </Collapse>
     </div>
   );
 };
