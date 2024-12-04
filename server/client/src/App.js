@@ -4,7 +4,7 @@ import TestJob from "./components/TestJob";
 import TestResults from "./components/TestResults";
 import Button from "react-bootstrap/Button";
 
-<title>My Blog</title>
+
 
 const App = () => {
   const { jobNo, setTestResults, setJobNo, setTestJobs, testJobs } = useContext(ApplicationContext);

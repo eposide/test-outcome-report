@@ -17,6 +17,7 @@ PORT=5000
 ## Usage
 
 1. Start the server: `node index.js`
+2. 
 2. The server will start listening on `http://localhost:[PORT]`
 
 ## API Endpoints
