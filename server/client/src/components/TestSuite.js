@@ -2,16 +2,27 @@ import React from "react";
 import TestSpec from "./TestSpec";
 
 const TestSuite = ({ suite }) => {
+  console.log("suite", suite);
   return (
-    <div class="card">
-      <div class="card-header">Suite: {suite.title}</div>
-      <div class="card-body">  
-        <p >File: {suite.file}</p>
+    <div className="card">
+      <div className="card-header">Suite: {suite.title}</div>
+      <div className="card-body">
+        <p>File: {suite.file}</p>
         <p>
-        {suite.specs.map((spec, index) => (
-          <TestSpec key={index} spec={spec} />
-        ))}
-      </p>
+          {suite.specs.length > 0 ? (
+            suite.specs.map((spec, index) => (
+              <TestSpec key={index} spec={spec} />
+            ))
+          ) : (
+            suite.suites[0] && suite.suites[0].specs.length > 0 ? (
+              suite.suites[0].specs.map((spec, index) => (
+                <TestSpec key={index} spec={spec} />
+              ))
+            ) : (
+              <p>No TestSpecs found.</p>
+            )
+          )}
+        </p>
       </div>
     </div>
   );
