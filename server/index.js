@@ -5,10 +5,10 @@ const app = express();
 const path = require('path');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const cors = require('cors');
-const TestResults = require('./models/testResults');
+const TestSpecs = require('./models/testSpecs');
 require('dotenv').config();
 
-/*let mongoServer; 
+let mongoServer; 
 
 (async () => {
   
@@ -26,7 +26,7 @@ require('dotenv').config();
     ? "MongoDB connected to in-memory server"
     : "MongoDB connected to external server");
 })();
-*/
+
 
 let testResultFiles = [];
 function getDateFromData(data) {
@@ -34,6 +34,7 @@ function getDateFromData(data) {
   const date = new Date(startTime);
   return date;
 }
+
 
 async function searchFiles(dir, fileName) {
     try {
@@ -88,21 +89,42 @@ async function populateTestResultDatabase(jobDirectories) {
         const jobResults = await getResultsForJob(jobNo);
         
         for (const result of jobResults) {
-            const resultDate = getDateFromData(result.data);
-            const savedResult = await TestResults.find({jobNo:jobNo, file: result.filePath, dateTime: resultDate});
-            if (savedResult && savedResult.length == 0) {
-                const testResultModel = new TestResults(
-                    {
-                        jobNo: jobNo,
-                        file: result.filePath, 
-                        dateTime: resultDate, 
-                        results: result.data
-                    }
-                );
-                await testResultModel.save();
+            const testDate = getDateFromData(result.data);
+            const testSuites = result.data.suites;
+            for (const testSuite of testSuites) {
+                saveSpecs(testSuite, testDate);
             }
         }
     }
+}
+
+async function saveSpecs(testSuite, testDate) {
+
+    let specs;
+    if (testSuite.specs && testSuite.specs.length > 0) {
+        specs = testSuite.specs;
+    } else if (testSuite.suites && testSuite.suites.length > 0) {
+        specs = testSuite.suites.flatMap(suite => suite.specs);
+    }
+
+    for (const testSpec of specs) {
+        const savedSpecs = await TestSpecs.find({title:testSpec.title, testDate: testDate});
+        if (savedSpecs && savedSpecs.length == 0) {
+            const status = testSpec.tests[0].results[0].status;
+            const duration = testSpec.tests[0].results[0].duration;
+            const testSpecModel = new TestSpecs(
+                    {
+                        title: testSpec.title,
+                        testDate: testDate, 
+                        status: status,
+                        duration: duration,
+                    }
+                );
+            console.log("saving spec " + testSpecModel);
+            await testSpecModel.save();
+        }
+    }
+
 }
 
 
@@ -125,7 +147,7 @@ app.get('/api/testjobs', async (req, res) => {
        
         const directories = await getDirectories();
         
-       // populateTestResultDatabase(directories);
+        populateTestResultDatabase(directories);
 
         console.log(directories);
         res.json(directories);
