@@ -8,7 +8,7 @@ const cors = require('cors');
 const TestResults = require('./models/testResults');
 require('dotenv').config();
 
-let mongoServer; 
+/*let mongoServer; 
 
 (async () => {
   
@@ -26,6 +26,7 @@ let mongoServer;
     ? "MongoDB connected to in-memory server"
     : "MongoDB connected to external server");
 })();
+*/
 
 let testResultFiles = [];
 function getDateFromData(data) {
@@ -124,7 +125,7 @@ app.get('/api/testjobs', async (req, res) => {
        
         const directories = await getDirectories();
         
-        populateTestResultDatabase(directories);
+       // populateTestResultDatabase(directories);
 
         console.log(directories);
         res.json(directories);
