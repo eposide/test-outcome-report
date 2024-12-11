@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ApplicationProvider } from "./components/ApplicationContext";
+import { ApplicationProvider } from "./context/ApplicationContext";
 import App from "./App";
 import { createRoot } from "react-dom/client";
 

@@ -1,13 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ApplicationContext } from "./ApplicationContext";
+import React from "react";
+import { ApplicationContext } from "../context/ApplicationContext";
+import TestResultDetail from "./TestResultDetail";
 import { Collapse } from "react-bootstrap";
+import { v4 as uuidv4 } from 'uuid'; // Import uuid library
 
 const SpecsResults = () => {
 
-  const [openTitle, setOpenTitle] = useState(null); //toggle collapse 
-  const { setTestSpecs, testSpecs } = useContext(ApplicationContext);
+  const [openTitle, setOpenTitle] = React.useState(null); //toggle collapse 
+  const { setTestSpecs, testSpecs , setTestResult, testResult} = React.useContext(ApplicationContext);
   
-  useEffect(() => {
+  
+
+  React.useEffect(() => {
 
     const url = `/api/testSpecs`;
     fetch(url, { method: 'GET' })
@@ -22,31 +26,34 @@ const SpecsResults = () => {
   }, [setTestSpecs]);
 
 
+
+  
  return (
-    <div className="container mt-4">
+    <div className="container h100">
        {Object.keys(testSpecs).map((title) => (
-        <div key={title} className="mb-3">
-          <button
-            className="btn btn-primary"
+        <div key={title} className="card">
+          <div 
+            className="card-header bg-info"
             onClick={() => setOpenTitle(openTitle === title ? null : title)}
             aria-expanded={openTitle === title}
           >
             {title} ({testSpecs[title].length} tests)
-          </button>
+          </div>
 
           <Collapse in={openTitle === title}>
-            <div className="mt-2">
+            <div className="card-body">
               <table className="table table-striped">
                 <thead>
                   <tr>
                     <th>Date</th>
                     <th>Duration (ms)</th>
                     <th>Status</th>
+                    <th>View Results</th>
                   </tr>
                 </thead>
                 <tbody>
                   {testSpecs[title].map((test, index) => (
-                    <tr key={index}>
+                   <tr key={uuidv4()} > 
                       <td>{test.testDate}</td>
                       <td>{test.duration}</td>
                       <td
@@ -56,6 +63,9 @@ const SpecsResults = () => {
                       >
                         {test.status}
                       </td>
+                      <td>
+                      <button type="button" className="btn btn-outline-info" onClick={() => setTestResult(test.testResult)}>Details</button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -64,7 +74,8 @@ const SpecsResults = () => {
           </Collapse>
         </div>
       ))}
-    </div>
+      {testResult && <TestResultDetail testResult={testResult}  />}
+  </div>
   );
 };
 

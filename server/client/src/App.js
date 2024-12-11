@@ -1,18 +1,15 @@
-import React, { useContext, useEffect } from "react";
-import { ApplicationContext } from "./components/ApplicationContext";
-import TestJob from "./components/TestJob";
-import TestResults from "./components/TestResults";
+import React from "react";
 import SpecsResults from "./components/SpecsResults";
-import Button from "react-bootstrap/Button";
+import TestResultDetail from "./components/TestResultDetail";
+import { ApplicationContext } from "./context/ApplicationContext";
 
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
-  const { jobNo, setTestResults, setJobNo, setTestJobs, testJobs } = useContext(ApplicationContext);
-  
-  
+  const {testResult} = React.useContext(ApplicationContext);
+
   return (  
-    <div>
+    <div className="container">
        <SpecsResults />
     </div>
   );
