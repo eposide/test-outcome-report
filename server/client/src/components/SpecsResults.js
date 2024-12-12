@@ -52,14 +52,14 @@ const SpecsResults = () => {
  return (
     <div className="container h100">
        <div className="row">
-       <div className="col-md-6">
+       <div className="col-md-5">
        <div className="card">
        <div className="card-header h100">
           <div className="row">
-              <div className="col-md-6">
+              <div className="col-md-4">
                  <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => handleRefresh()}>Refresh Tests</button>
               </div>
-              <div className="col-md-6">
+              <div className="col-md-3">
                <p className="card-text">{notification}</p>
               </div> 
           </div>
@@ -109,10 +109,10 @@ const SpecsResults = () => {
           </Collapse>
         </div>
       ))}
-    </div>
-  </div>
       </div>
-      <div className="col-md-6">
+    </div>
+    </div>
+      <div className="col-md-7">
       {testResult && <TestResultDetail testResult={testResult}  />}
       </div>
   </div>
