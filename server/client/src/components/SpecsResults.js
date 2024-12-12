@@ -7,12 +7,13 @@ import { v4 as uuidv4 } from 'uuid'; // Import uuid library
 const SpecsResults = () => {
 
   const [openTitle, setOpenTitle] = React.useState(null); //toggle collapse 
-  const { setTestSpecs, testSpecs , setTestResult, testResult} = React.useContext(ApplicationContext);
+  const { setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification} = React.useContext(ApplicationContext);
   
   
 
   React.useEffect(() => {
 
+    if (!testSpecs || testSpecs.length == 0) {
     const url = `/api/testSpecs`;
     fetch(url, { method: 'GET' })
         .then((response) => {
@@ -22,19 +23,53 @@ const SpecsResults = () => {
         })
         .then((data) => setTestSpecs(data))
         .catch((error) => console.error("Error fetching test results:", error));
-    
-  }, [setTestSpecs]);
+    }
+  }, [setTestSpecs, testSpecs]);
 
+  React.useEffect(() => { 
 
+    const eventSource = new EventSource("/events");
 
-  
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setNotification(data.message);
+    };
+
+    return () => eventSource.close();
+  }, []);
+
+ const openTitleAndClearDetails = (title) => {
+   setOpenTitle(openTitle === title? null : title);
+   setTestResult(null);
+ };
+
+ const handleRefresh = () => {
+   setTestSpecs([]);
+   setTestResult(null);
+   setNotification("");
+  };
+
  return (
     <div className="container h100">
+       <div className="row">
+       <div className="col-md-6">
+       <div className="card">
+       <div className="card-header h100">
+          <div className="row">
+              <div className="col-md-6">
+                 <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => handleRefresh()}>Refresh Tests</button>
+              </div>
+              <div className="col-md-6">
+               <p className="card-text">{notification}</p>
+              </div> 
+          </div>
+       </div>
+       <div className="card-body overflow-auto">
        {Object.keys(testSpecs).map((title) => (
         <div key={title} className="card">
-          <div 
+          <div role="button" 
             className="card-header bg-info"
-            onClick={() => setOpenTitle(openTitle === title ? null : title)}
+            onClick={() => openTitleAndClearDetails(title)}
             aria-expanded={openTitle === title}
           >
             {title} ({testSpecs[title].length} tests)
@@ -74,9 +109,16 @@ const SpecsResults = () => {
           </Collapse>
         </div>
       ))}
+    </div>
+  </div>
+      </div>
+      <div className="col-md-6">
       {testResult && <TestResultDetail testResult={testResult}  />}
+      </div>
+  </div>
   </div>
   );
 };
+
 
 export default SpecsResults;

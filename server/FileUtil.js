@@ -9,13 +9,16 @@ const source = process.env.TEST_JOBS_LOCATION;
 class FileUtil {
  
   constructor() {
-      console.log('source ' + source);
+      
       this.testResultFiles = [];
-      fs.watch(source, (eventType, source) => {
-        console.log(`Event type: ${eventType}`);
-        this.testResultFiles = [];
-        this.searchFiles(source, 'results.json');
-    });
+      
+  }
+
+  async changeInSourceLocation() {
+    // a change was detected in the source location read all files 
+    console.log('Change in source location reloading files'); 
+    this.testResultFiles = [];
+    this.searchFiles(source, 'results.json');
   }
   async readDirectories() {  
     try {
@@ -42,7 +45,7 @@ class FileUtil {
         for (const { filePath, stats } of fileStats) {
             if (stats.isDirectory()) {
                 await this.searchFiles(filePath, fileName);
-            } else if (stats.isFile() && filePath.includes(fileName)) {
+            } else if (stats.isFile() && filePath.includes(fileName) && !this.testResultFiles.includes(filePath)) {
                 this.testResultFiles.push(filePath);
             }
         }
@@ -52,10 +55,6 @@ class FileUtil {
     return this.testResultFiles;
   }
 
-
-
 }
-    
-
 
 module.exports = FileUtil;

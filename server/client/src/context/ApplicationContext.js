@@ -12,12 +12,13 @@ export const ApplicationContext = createContext({
 export const ApplicationProvider = ({ children }) => {
   
   const [testResult, setTestResult] = useState();
+  const [notification, setNotification] = useState("");
   const [testResultDetail, setTestResultDetail] = useState();
   const [testSpecs, setTestSpecs] = useState([]);
   
 
   return (
-    <ApplicationContext.Provider value={{ testResult, setTestResult, testResultDetail, setTestResultDetail, testSpecs, setTestSpecs }}>
+    <ApplicationContext.Provider value={{ testResult, setTestResult, testResultDetail, setTestResultDetail, testSpecs, setTestSpecs, notification, setNotification }}>
       {children}
     </ApplicationContext.Provider>
   );

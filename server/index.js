@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 
 const app = express();
 const path = require('path');
@@ -9,15 +10,15 @@ const FileUtil = require('./FileUtil');
 const DBUtil = require('./DbUtil');
 require('dotenv').config();
 
-
+let noOfFiles = 0;
 const fileUtil  = new FileUtil();
 const dbUtil = new DBUtil();
 
 (async () => {
   
-  const files = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
-
-  await dbUtil.populateTestResultDatabase(files);
+  const initfiles = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
+  noOfFiles = initfiles.length;
+  await dbUtil.populateTestResultDatabase(initfiles);
 
 })();
 
@@ -52,6 +53,23 @@ app.get('/api/testSpecs', async (req, res) => {
         console.log(error);
         res.status(500).send({ error: 'Unable to fetch test specs' });
     }
+});
+
+app.get("/events", async (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+
+  // Send notification to client if new result files arrived
+  fs.watch(process.env.TEST_JOBS_LOCATION, async (eventType, eventSource) => {
+        console.log(`Event type: ${eventType} on source: ${eventSource}`);
+        fileUtil.changeInSourceLocation();
+        const files = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
+        if (noOfFiles != files.length) {
+            await dbUtil.populateTestResultDatabase(files);
+            res.write(`data: ${JSON.stringify({ message: "New test results arrived!" })}\n\n`);
+        }
+  });
+  
 });
 
 // Serve static files from the react app

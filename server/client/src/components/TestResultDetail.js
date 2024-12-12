@@ -23,8 +23,8 @@ const TestResultDetail = () => {
 
 
   return (
-    <div className="card h100" >
-    <div className="card-header">Details</div>
+    <div className="card" >
+    <div className="card-header h100">Details</div>
       <div className="card-body overflow-auto">
         <pre>{JSON.stringify(testResultDetail, null, 2)}</pre>
       </div>

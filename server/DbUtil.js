@@ -38,7 +38,6 @@ class DBUtil {
         const resultFileRef = {filePath: file, data: JSON.parse(data)};
         
         const testResult = await this.saveTestResult(resultFileRef);
-        console.log('got test result id' + testResult._id);
         const testDate = this.getDateFromData(resultFileRef.data);
         const testSuites = resultFileRef.data.suites;
         for (const testSuite of testSuites) {
