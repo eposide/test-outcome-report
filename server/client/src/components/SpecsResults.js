@@ -50,7 +50,7 @@ const SpecsResults = () => {
   };
 
  return (
-    <div className="container h100">
+    <div className="container">
        <div className="row">
        <div className="col-md-5">
        <div className="card">
