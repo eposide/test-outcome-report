@@ -79,8 +79,15 @@ class DBUtil {
     for (const testSpec of specs) {
         const savedSpecs = await TestSpec.find({title:testSpec.title, testDate: testDate});
         if (savedSpecs && savedSpecs.length == 0) {
-            const status = testSpec.tests[0].results[0].status;
-            const duration = testSpec.tests[0].results[0].duration;
+          let status = "";
+             let duration = 0;
+            if (!testSpec.tests[0].results[0]) {
+                status = "Skipped";
+                duration = 0;
+            } else {
+              status = testSpec.tests[0].results[0].status;
+              duration = testSpec.tests[0].results[0].duration;
+            }
             const testSpecModel = new TestSpec(
                     {
                         title: testSpec.title,
@@ -89,7 +96,7 @@ class DBUtil {
                         duration: duration,
                         testResult: testResult
                     }
-                );
+              );
             console.log("saving spec " + testSpecModel);
             await testSpecModel.save();
         }
