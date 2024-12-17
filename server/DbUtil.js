@@ -82,8 +82,8 @@ class DBUtil {
           let status = "";
              let duration = 0;
             if (!testSpec.tests[0].results[0]) {
-                status = "Skipped";
-                duration = 0;
+              status = "Skipped";
+              duration = 0;
             } else {
               status = testSpec.tests[0].results[0].status;
               duration = testSpec.tests[0].results[0].duration;

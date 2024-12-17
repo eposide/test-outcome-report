@@ -62,7 +62,7 @@ app.get("/events", async (req, res) => {
   // Send notification to client if new result files arrived
   fs.watch(process.env.TEST_JOBS_LOCATION, async (eventType, eventSource) => {
         console.log(`Event type: ${eventType} on source: ${eventSource}`);
-        fileUtil.changeInSourceLocation();
+        await fileUtil.changeInSourceLocation();
         const files = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
         if (noOfFiles != files.length) {
             await dbUtil.populateTestResultDatabase(files);
