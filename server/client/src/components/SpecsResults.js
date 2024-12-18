@@ -31,11 +31,19 @@ const SpecsResults = () => {
     const eventSource = new EventSource("/events");
 
     eventSource.onmessage = (event) => {
+      console.log('received event ', event);
       const data = JSON.parse(event.data);
       setNotification(data.message);
     };
 
-    return () => eventSource.close();
+    eventSource.onerror = (event) => {
+      console.error(`EventSource error: ${event.message}`);
+    }
+
+    return () => {
+      console.log('EventSource being closed');
+      eventSource.close();
+    }
   }, []);
 
  const openTitleAndClearDetails = (title) => {

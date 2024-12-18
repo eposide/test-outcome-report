@@ -1,4 +1,5 @@
 const express = require('express');
+
 const fs = require('fs');
 
 const app = express();
@@ -10,6 +11,7 @@ const FileUtil = require('./FileUtil');
 const DBUtil = require('./DbUtil');
 require('dotenv').config();
 
+let clients = []
 let noOfFiles = 0;
 let reloading = false;
 const fileUtil  = new FileUtil();
@@ -17,19 +19,24 @@ const dbUtil = new DBUtil();
 
 (async () => {
   
-  const initfiles = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
-  noOfFiles = initfiles.length;
-  await dbUtil.populateTestResultDatabase(initfiles);
+  const initFiles = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
+  noOfFiles = initFiles.length;
+  await dbUtil.populateTestResultDatabase(initFiles);
 
 })();
 
 
-let testResultFiles = [];
 
 function getDateFromData(data) {
   const startTime = data.stats.startTime;
   const date = new Date(startTime);
   return date;
+}
+
+function sendEvent(data) {
+  clients.forEach((client) => {
+    client.write(`data: ${JSON.stringify({ message: "New test results arrived!" })}\n\n`);
+  });
 }
 
 app.get('/api/result/:resultId', async (req, res) => {
@@ -45,11 +52,8 @@ app.get('/api/result/:resultId', async (req, res) => {
 app.get('/api/testSpecs', async (req, res) => {
 
     try { 
-        
         const groupTestResults = await dbUtil.getTestSpecs();
-
         res.json(groupTestResults);
-        
     } catch (error) {
         console.log(error);
         res.status(500).send({ error: 'Unable to fetch test specs' });
@@ -59,6 +63,11 @@ app.get('/api/testSpecs', async (req, res) => {
 app.get("/events", async (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  // Add current client to the list of connected clients
+  clients.push(res);
+  console.log("New client connected:", clients.length);
 
   // Send notification to client if new result files arrived
   fs.watch(process.env.TEST_JOBS_LOCATION, async (eventType, eventSource) => {
@@ -72,14 +81,20 @@ app.get("/events", async (req, res) => {
             console.log('no of files vs files found ' + (noOfFiles != files.length));
             if (noOfFiles != files.length) {
                 await dbUtil.populateTestResultDatabase(files);
-                res.write(`data: ${JSON.stringify({ message: "New test results arrived!" })}\n\n`);
+                sendEvent('New test results arrived!');
                 noOfFiles = files.length; // update the number of files to the current count
             }
             reloading = false; // reset the reload flag when the file change event is processed
         }
   });
+
+  req.on("close", () => {
+     clients = clients.filter((client) => client !== res);
+     console.log("Client disconnected:", clients.length);  
+  });
   
 });
+
 
 // Serve static files from the react app
 app.use(express.static(path.join(__dirname, 'client/build')));
