@@ -11,6 +11,7 @@ const DBUtil = require('./DbUtil');
 require('dotenv').config();
 
 let noOfFiles = 0;
+let reloading = false;
 const fileUtil  = new FileUtil();
 const dbUtil = new DBUtil();
 
@@ -61,12 +62,20 @@ app.get("/events", async (req, res) => {
 
   // Send notification to client if new result files arrived
   fs.watch(process.env.TEST_JOBS_LOCATION, async (eventType, eventSource) => {
+        
         console.log(`Event type: ${eventType} on source: ${eventSource}`);
-        await fileUtil.changeInSourceLocation();
-        const files = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
-        if (noOfFiles != files.length) {
-            await dbUtil.populateTestResultDatabase(files);
-            res.write(`data: ${JSON.stringify({ message: "New test results arrived!" })}\n\n`);
+        if (!reloading) {
+            console.log('Reloading is false will do check for reload');
+            reloading = true; // prevent multiple reloads while waiting for the file change event
+            await fileUtil.changeInSourceLocation();
+            const files = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
+            console.log('no of files vs files found ' + (noOfFiles != files.length));
+            if (noOfFiles != files.length) {
+                await dbUtil.populateTestResultDatabase(files);
+                res.write(`data: ${JSON.stringify({ message: "New test results arrived!" })}\n\n`);
+                noOfFiles = files.length; // update the number of files to the current count
+            }
+            reloading = false; // reset the reload flag when the file change event is processed
         }
   });
   
