@@ -13,7 +13,7 @@ const SpecsResults = () => {
 
   React.useEffect(() => {
 
-    if (!testSpecs || testSpecs.length == 0) {
+    if (!testSpecs || testSpecs.length === 0) {
     const url = `/api/testSpecs`;
     fetch(url, { method: 'GET' })
         .then((response) => {
@@ -44,7 +44,7 @@ const SpecsResults = () => {
       console.log('EventSource being closed');
       eventSource.close();
     }
-  }, []);
+  }, [setNotification, notification]);
 
  const openTitleAndClearDetails = (title) => {
    setOpenTitle(openTitle === title? null : title);
