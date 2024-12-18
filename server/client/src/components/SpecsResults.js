@@ -67,14 +67,14 @@ const SpecsResults = () => {
               <div className="col-md-4">
                  <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => handleRefresh()}>Refresh Tests</button>
               </div>
-              <div className="col-md-3">
+              <div className="col">
                <p className="card-text">{notification}</p>
               </div> 
           </div>
        </div>
        <div className="card-body overflow-auto">
        {Object.keys(testSpecs).map((title) => (
-        <div key={title} className="card">
+         <div key={title} className="card">
           <div role="button" 
             className="card-header bg-info"
             onClick={() => openTitleAndClearDetails(title)}
