@@ -57,6 +57,10 @@ const SpecsResults = () => {
    setNotification("");
   };
 
+  const hasFailedTest = (testSpec) => {
+    return testSpec.some(test => test['status'] != "passed");
+  };
+
  return (
     <div className="container">
        <div className="row">
@@ -76,7 +80,7 @@ const SpecsResults = () => {
        {Object.keys(testSpecs).map((title) => (
          <div key={title} className="card">
           <div role="button" 
-            className="card-header bg-info"
+            className={`card-header ${hasFailedTest(testSpecs[title]) ? 'bg-danger' : 'bg-info'}`}
             onClick={() => openTitleAndClearDetails(title)}
             aria-expanded={openTitle === title}
           >
