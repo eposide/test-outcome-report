@@ -31,7 +31,7 @@ class DBUtil {
   
 
   async populateTestResultDatabase(files) { 
-    
+    try {
      for (const file of files) {
 
         const data = await fs.promises.readFile(file, 'utf-8');
@@ -43,6 +43,9 @@ class DBUtil {
         for (const testSuite of testSuites) {
             this.saveSpecs(testSuite, testDate, testResult);
         }      
+    } 
+    } catch (error) {
+        console.error("Error populating test result database:", error);
     }
   }
 
@@ -110,9 +113,9 @@ class DBUtil {
   }
 
 
-  async getTestSpecs() { 
+  async getAllTestSpecs() { 
     console.log("Fetching all specs");
-    const testSpecs = await TestSpec.find();
+    const testSpecs = await TestSpec.find().sort({title: 1, testDate: -1});
     const groupTestResults = testSpecs.reduce((acc, suite) => {
             const details = { duration:suite.duration, testDate: suite.testDate, status: suite.status, testResult: suite.testResult}; 
             const title = suite.title;
@@ -124,6 +127,48 @@ class DBUtil {
         }, {});
     return groupTestResults;
   }
+
+
+  /**
+   * Retrieves all test specs from the database. noOfTests will be applied to the number of tests per spec
+   * If no number is provided, it fetches all tests for specs.
+   * 
+   * @param {number} [noOfTests] - The number of tests per spec to retrieve. If not provided, all tests per spec will be fetched.
+   * @returns {Object} - An object containing grouped test specs. Each key is a test spec title, and the value is an array of test spec details.
+   * 
+   * @example
+   * // Fetch all tests for specs
+   * const allTestSpecs = await dbUtil.getTestSpecs();
+   * 
+   * // Fetch the first 10 tests per spec
+   * const first10TestSpecs = await dbUtil.getTestSpecs(10);
+   */
+  async getTestSpecs(noOfTests) { 
+
+      if (!noOfTests || noOfTests === 0 || noOfTests < 0) {
+        return this.getAllTestSpecs();
+      }
+
+      console.log("Fetching " + noOfTests + " tests per spec");
+
+      const testSpecs = await TestSpec.find().sort({title: 1, testDate: -1});
+      const groupTestResults = testSpecs.reduce((acc, suite, index) => {
+            //if (index < noOfTests) {
+              const details = { duration:suite.duration, testDate: suite.testDate, status: suite.status, testResult: suite.testResult}; 
+              const title = suite.title;
+              if (!acc[title]) {
+                  acc[title] = [];
+              }
+              if (acc[title].length < noOfTests) {
+                acc[title] = acc[title].concat(details); // Combine test specs for the same title
+              }
+              return acc;
+            //}
+          }, {});
+      return groupTestResults;
+  }
+
+  
 
   async getTestResult(testResultId) { 
     console.log("Fetching test result by id " + testResultId);
