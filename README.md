@@ -8,6 +8,7 @@ The server component provides an API for fetching test results.
 2. Clone the repository: `git clone https://github.com/your-username/test-outcome-report.git`
 3. Navigate to the server directory: `cd test-outcome-report/server`
 4. Install dependencies: `npm install`
+5. Run the application: `npm start`
 
 ## Configuration
 Two configured parameters are required

@@ -4,7 +4,11 @@
   "description": "display the outcomes of automated Playwright test that has be run on Jenkins ",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "install-client": "cd client && npm install",
+    "build-client": "cd client && npm run build",
+    "start-server": "node index.js",
+    "install" : "npm run install-client && npm install",
+    "start": "npm run build-client && npm run start-server"
   },
   "repository": {
     "type": "git",
