@@ -23,10 +23,10 @@ const TestResultDetail = () => {
 
 
   return (
-    <div className="card" >
+    <div className="card"  >
     <div className="card-header h100">Details</div>
-      <div className="card-body overflow-auto">
-        <pre style={{ fontSize: "10px" }}><code>{JSON.stringify(testResultDetail, null, 2)}</code></pre>
+      <div className="card-body overflow-auto" >
+        <pre style={{ fontSize: "10px", maxHeight: "800px" }}><code>{JSON.stringify(testResultDetail, null, 2)}</code></pre>
       </div>
     </div>
   );

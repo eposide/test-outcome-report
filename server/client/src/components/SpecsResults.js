@@ -1,13 +1,14 @@
 import React from "react";
 import { ApplicationContext } from "../context/ApplicationContext";
 import TestResultDetail from "./TestResultDetail";
+import SpecRuns from "./SpecRuns";
 import { Collapse } from "react-bootstrap";
 import { v4 as uuidv4 } from 'uuid'; // Import uuid library
 
 const SpecsResults = () => {
 
-  const [openTitle, setOpenTitle] = React.useState(null); //toggle collapse 
-  const { setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification} = React.useContext(ApplicationContext);
+ // const [openTitle, setOpenTitle] = React.useState(null); //toggle collapse 
+  const { setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns} = React.useContext(ApplicationContext);
   
   
 
@@ -47,7 +48,8 @@ const SpecsResults = () => {
   }, [setNotification, notification]);
 
  const openTitleAndClearDetails = (title) => {
-   setOpenTitle(openTitle === title? null : title);
+   //setOpenTitle(openTitle === title? null : title);
+   setSpecRuns(testSpecs[title]);
    setTestResult(null);
  };
 
@@ -58,7 +60,7 @@ const SpecsResults = () => {
   };
 
   const hasFailedTest = (testSpec) => {
-    return testSpec.some(test => test['status'] != "passed");
+    return testSpec.some(test => test['status'] !== "passed");
   };
 
  return (
@@ -76,53 +78,25 @@ const SpecsResults = () => {
               </div> 
           </div>
        </div>
-       <div className="card-body overflow-auto">
+       <div className="h-5 card-body overflow-auto " style={{ maxHeight: "400px" }}>
        {Object.keys(testSpecs).map((title) => (
          <div key={title} className="card">
           <div role="button" 
             className={`card-header ${hasFailedTest(testSpecs[title]) ? 'bg-danger' : 'bg-info'}`}
             onClick={() => openTitleAndClearDetails(title)}
-            aria-expanded={openTitle === title}
           >
             {title} ({testSpecs[title].length} tests)
           </div>
 
-          <Collapse in={openTitle === title}>
-            <div className="card-body">
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Duration (ms)</th>
-                    <th>Status</th>
-                    <th>View Results</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {testSpecs[title].map((test, index) => (
-                   <tr key={uuidv4()} > 
-                      <td>{test.testDate}</td>
-                      <td>{test.duration}</td>
-                      <td
-                        style={{
-                          color: test.status === "passed" ? "green" : "red",
-                        }}
-                      >
-                        {test.status}
-                      </td>
-                      <td>
-                      <button type="button" className="btn btn-outline-info" onClick={() => setTestResult(test.testResult)}>Details</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Collapse>
         </div>
       ))}
       </div>
+      <div className="col-md-15">
+        {specRuns && specRuns.length > 0 && <SpecRuns specRuns={specRuns}/>}
+      </div>
+      
     </div>
+
     </div>
       <div className="col-md-7">
       {testResult && <TestResultDetail testResult={testResult}  />}
