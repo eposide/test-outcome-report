@@ -1,10 +1,24 @@
 const express = require('express');
 
 const fs = require('fs');
-const log = require('log4js').getLogger('index');
+const log4js = require('log4js');
 
 const app = express();
 const path = require('path');
+
+try {
+    fs.mkdirSync('./logs');
+} catch (err) {
+    if (err.code !== 'EEXIST') {
+        console.error('Error creating logs directory:', err);
+        process.exit(1);
+    }
+}
+log4js.configure('./config/log4js.json');
+
+const log = log4js.getLogger('index');
+
+
 const FileUtil = require('./FileUtil');
 const DBUtil = require('./DbUtil');
 require('dotenv').config();
@@ -60,7 +74,7 @@ app.get("/events", async (req, res) => {
 
   // Add current client to the list of connected clients
   clients.push(res);
-  console.log("New client connected:", clients.length);
+  log.info("New client connected:", clients.length);
 
   // Send notification to client if new result files arrived
   fs.watch(process.env.TEST_JOBS_LOCATION, async (eventType, eventSource) => {

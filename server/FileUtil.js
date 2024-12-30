@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const log = require('log4js').getLogger('fileutil');
 require('dotenv').config();
 
 
@@ -16,7 +17,7 @@ class FileUtil {
 
   async changeInSourceLocation() {
     // a change was detected in the source location read all files 
-    console.log('Change in source location reloading files'); 
+    log.debug('Change in source location reloading files'); 
     this.testResultFiles = [];
     this.searchFiles(source, 'results.json');
   }
@@ -27,7 +28,7 @@ class FileUtil {
         .map(dirent => dirent.name);
       return directories;
     } catch (error) {
-      console.error(`Error reading directories ${source}:`, error);
+      log.error(`Error reading directories ${source}:`, error);
     }
   
   }
@@ -50,7 +51,7 @@ class FileUtil {
             }
         }
     } catch (error) {
-        console.error(`Error reading directory ${dir}:`, error);
+        log.error(`Error reading directory ${dir}:`, error);
     }
     return this.testResultFiles;
   }

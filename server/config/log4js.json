@@ -2,13 +2,13 @@
     "appenders": {
       "server": {
         "type": "dateFile",
-        "filename": "logs/server.log",
+        "filename": "./logs/server.log",
         "pattern": "-yyyy-MM-dd",
         "numBackups": 3
       },
       "errorFile": {
         "type": "file",
-        "filename": "logs/errors.log"
+        "filename": "./logs/errors.log"
       },
       "errors": {
         "type": "logLevelFilter",

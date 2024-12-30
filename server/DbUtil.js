@@ -1,6 +1,7 @@
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const fs = require('fs');
+const log = require('log4js').getLogger('dbutil');
 
 const TestSpec = require('./models/TestSpec');
 const TestResult = require('./models/TestResult');
@@ -16,12 +17,12 @@ let mongoServer;
     : null;
   
   const uri = mongoServer ? mongoServer.getUri() : process.env.MONGODB_URI;
-  console.log("database uri " + uri);
+  log.info("database uri " + uri);
   await mongoose.connect(uri, {
     dbName: 'testresultsDB',
   });
 
-  console.log(process.env.MONGODB_IN_MEMORY === 'YES'
+  log.info(process.env.MONGODB_IN_MEMORY === 'YES'
     ? "MongoDB connected to in-memory server"
     : "MongoDB connected to external server");
 })();
@@ -45,7 +46,7 @@ class DBUtil {
         }      
     } 
     } catch (error) {
-        console.error("Error populating test result database:", error);
+        log.error("Error populating test result database:", error);
     }
   }
 
@@ -60,7 +61,7 @@ class DBUtil {
             results: resultFileRef.data
         });
 
-        console.log("saving test result " + testResultModel);
+        log.debug("saving test result " + testResultModel);
         await testResultModel.save();
         return testResultModel;
     }
@@ -100,7 +101,7 @@ class DBUtil {
                         testResult: testResult
                     }
               );
-            console.log("saving spec " + testSpecModel);
+            log.debug("saving spec " + testSpecModel);
             await testSpecModel.save();
         }
     }
@@ -114,7 +115,7 @@ class DBUtil {
 
 
   async getAllTestSpecs() { 
-    console.log("Fetching all specs");
+    log.debug("Fetching all specs");
     const testSpecs = await TestSpec.find().sort({title: 1, testDate: -1});
     const groupTestResults = testSpecs.reduce((acc, suite) => {
             const details = { duration:suite.duration, testDate: suite.testDate, status: suite.status, testResult: suite.testResult}; 
@@ -149,21 +150,19 @@ class DBUtil {
         return this.getAllTestSpecs();
       }
 
-      console.log("Fetching " + noOfTests + " tests per spec");
+      log.debug("Fetching " + noOfTests + " tests per spec");
 
       const testSpecs = await TestSpec.find().sort({title: 1, testDate: -1});
       const groupTestResults = testSpecs.reduce((acc, suite, index) => {
-            //if (index < noOfTests) {
-              const details = { duration:suite.duration, testDate: suite.testDate, status: suite.status, testResult: suite.testResult}; 
-              const title = suite.title;
-              if (!acc[title]) {
-                  acc[title] = [];
-              }
-              if (acc[title].length < noOfTests) {
-                acc[title] = acc[title].concat(details); // Combine test specs for the same title
-              }
-              return acc;
-            //}
+            const details = { duration:suite.duration, testDate: suite.testDate, status: suite.status, testResult: suite.testResult}; 
+            const title = suite.title;
+            if (!acc[title]) {
+              acc[title] = [];
+            }
+            if (acc[title].length < noOfTests) {
+              acc[title] = acc[title].concat(details); // Combine test specs for the same title
+            }
+            return acc;
           }, {});
       return groupTestResults;
   }
@@ -171,7 +170,7 @@ class DBUtil {
   
 
   async getTestResult(testResultId) { 
-    console.log("Fetching test result by id " + testResultId);
+    log.debug("Fetching test result by id " + testResultId);
     const testResult = await TestResult.findById(testResultId);
     return testResult.results;
   }
