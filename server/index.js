@@ -1,12 +1,10 @@
 const express = require('express');
 
 const fs = require('fs');
+const log = require('log4js').getLogger('index');
 
 const app = express();
 const path = require('path');
-
-const TestSpec = require('./models/TestSpec');
-const TestResult = require('./models/TestResult');
 const FileUtil = require('./FileUtil');
 const DBUtil = require('./DbUtil');
 require('dotenv').config();
@@ -26,13 +24,6 @@ const dbUtil = new DBUtil();
 })();
 
 
-
-function getDateFromData(data) {
-  const startTime = data.stats.startTime;
-  const date = new Date(startTime);
-  return date;
-}
-
 function sendEvent(data) {
   clients.forEach((client) => {
     client.write(`data: ${JSON.stringify({ message: "New test results arrived!" })}\n\n`);
@@ -45,6 +36,7 @@ app.get('/api/result/:resultId', async (req, res) => {
         const resultDetail = await dbUtil.getTestResult(resultId);
         res.json(resultDetail);
     } catch (error) {
+        log.error(error);
         res.status(500).send({ error: 'Unable to fetch test results' });
     }
 });
@@ -56,7 +48,7 @@ app.get('/api/testSpecs', async (req, res) => {
         const groupTestResults = await dbUtil.getTestSpecs(noOfTestsPerSpec);
         res.json(groupTestResults);
     } catch (error) {
-        console.log(error);
+        log.error(error);
         res.status(500).send({ error: 'Unable to fetch test specs' });
     }
 });
@@ -73,13 +65,13 @@ app.get("/events", async (req, res) => {
   // Send notification to client if new result files arrived
   fs.watch(process.env.TEST_JOBS_LOCATION, async (eventType, eventSource) => {
         
-        console.log(`Event type: ${eventType} on source: ${eventSource}`);
+        log.debug(`Event type: ${eventType} on source: ${eventSource}`);
         if (!reloading) {
-            console.log('Reloading is false will do check for reload');
+            log.debug('Reloading is false will do check for reload');
             reloading = true; // prevent multiple reloads while waiting for the file change event
             await fileUtil.changeInSourceLocation();
             const files = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
-            console.log('no of files vs files found ' + (noOfFiles != files.length));
+            log.debug('no of files vs files found ' + (noOfFiles != files.length));
             if (noOfFiles != files.length) {
                 await dbUtil.populateTestResultDatabase(files);
                 sendEvent('New test results arrived!');
@@ -91,7 +83,7 @@ app.get("/events", async (req, res) => {
 
   req.on("close", () => {
      clients = clients.filter((client) => client !== res);
-     console.log("Client disconnected:", clients.length);  
+     log.debug("Client disconnected. Still connected: ", clients.length);  
   });
   
 });
@@ -107,4 +99,4 @@ app.get('*', (req, res) => {
 
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => log.info(`Server running on port ${PORT}`));

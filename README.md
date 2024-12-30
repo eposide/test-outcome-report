@@ -11,9 +11,11 @@ The server component provides an API for fetching test results.
 5. Run the application: `npm start`
 
 ## Configuration
-Two configured parameters are required
-TEST_JOBS_LOCATION=/temp/testresults/
+These configured parameters are required
+TEST_JOBS_LOCATION=c:/temp/testrunner/
 PORT=5000
+MONGODB_URI=mongodb://localhost:27017/
+LIMIT_TEST_RESULTS=5
 
 ## Usage
 
