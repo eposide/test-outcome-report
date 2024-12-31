@@ -40,8 +40,28 @@ const dbUtil = new DBUtil();
 
 function sendEvent(data) {
   clients.forEach((client) => {
+    log.info("writing New test results event to client");
     client.write(`data: ${JSON.stringify({ message: "New test results arrived!" })}\n\n`);
   });
+}
+
+async function reloadFiles(sendToClients) {
+
+    if (!reloading) {
+        log.debug('Reloading is false will do check for reload');
+        reloading = true; // prevent multiple reloads while waiting for the file change event
+        await fileUtil.changeInSourceLocation();
+        const files = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
+        log.debug('no of files vs files found ' + (noOfFiles != files.length));
+        if (noOfFiles != files.length) {
+            await dbUtil.populateTestResultDatabase(files);
+            if (sendToClients) { 
+                sendEvent('New test results arrived!');
+            }
+            noOfFiles = files.length; // update the number of files to the current count
+        }
+        reloading = false; // reset the reload flag when the file change event is processed
+    }
 }
 
 app.get('/api/result/:resultId', async (req, res) => {
@@ -67,6 +87,17 @@ app.get('/api/testSpecs', async (req, res) => {
     }
 });
 
+app.get('/api/reload', async (req, res) => {
+
+    try {
+        await reloadFiles(false);
+        res.json({ message: 'Files reloaded' });
+    } catch (error) {
+        log.error(error);
+        res.status(500).send({ error: 'Unable to reload files' });
+    }
+});
+
 app.get("/events", async (req, res) => {
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -80,18 +111,9 @@ app.get("/events", async (req, res) => {
   fs.watch(process.env.TEST_JOBS_LOCATION, async (eventType, eventSource) => {
         
         log.debug(`Event type: ${eventType} on source: ${eventSource}`);
+        
         if (!reloading) {
-            log.debug('Reloading is false will do check for reload');
-            reloading = true; // prevent multiple reloads while waiting for the file change event
-            await fileUtil.changeInSourceLocation();
-            const files = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
-            log.debug('no of files vs files found ' + (noOfFiles != files.length));
-            if (noOfFiles != files.length) {
-                await dbUtil.populateTestResultDatabase(files);
-                sendEvent('New test results arrived!');
-                noOfFiles = files.length; // update the number of files to the current count
-            }
-            reloading = false; // reset the reload flag when the file change event is processed
+            reloadFiles(true);
         }
   });
 

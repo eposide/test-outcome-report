@@ -2,12 +2,11 @@ import React from "react";
 import { ApplicationContext } from "../context/ApplicationContext";
 import TestResultDetail from "./TestResultDetail";
 import SpecRuns from "./SpecRuns";
-import { Collapse } from "react-bootstrap";
-import { v4 as uuidv4 } from 'uuid'; // Import uuid library
+
 
 const SpecsResults = () => {
 
- // const [openTitle, setOpenTitle] = React.useState(null); //toggle collapse 
+ 
   const { setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns} = React.useContext(ApplicationContext);
   
   
@@ -48,12 +47,24 @@ const SpecsResults = () => {
   }, [setNotification, notification]);
 
  const openTitleAndClearDetails = (title) => {
-   //setOpenTitle(openTitle === title? null : title);
+  
    setSpecRuns(testSpecs[title]);
    setTestResult(null);
  };
 
  const handleRefresh = () => {
+
+    const url = `/api/reload`;
+    fetch(url, { method: 'GET' })
+        .then((response) => {
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          console.log("response reload:" + response.status);
+          return response.json();
+        })
+        .catch((error) => console.error("Error reloading tests:", error));
+    
+  
+
    setTestSpecs([]);
    setTestResult(null);
    setNotification("");
