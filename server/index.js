@@ -50,9 +50,9 @@ async function reloadFiles(sendToClients) {
     if (!reloading) {
         log.debug('Reloading is false will do check for reload');
         reloading = true; // prevent multiple reloads while waiting for the file change event
-        await fileUtil.changeInSourceLocation();
+        fileUtil.initTestResultFiles();
         const files = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
-        log.debug('no of files vs files found ' + (noOfFiles != files.length));
+        log.debug('Should populate database ' + (noOfFiles != files.length));
         if (noOfFiles != files.length) {
             await dbUtil.populateTestResultDatabase(files);
             if (sendToClients) { 

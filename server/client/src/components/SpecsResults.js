@@ -61,13 +61,12 @@ const SpecsResults = () => {
           console.log("response reload:" + response.status);
           return response.json();
         })
+        .then(() => {
+          setTestSpecs([])
+          setTestResult(null);
+          setNotification("");
+        })
         .catch((error) => console.error("Error reloading tests:", error));
-    
-  
-
-   setTestSpecs([]);
-   setTestResult(null);
-   setNotification("");
   };
 
   const hasFailedTest = (testSpec) => {

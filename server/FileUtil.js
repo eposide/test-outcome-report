@@ -15,11 +15,11 @@ class FileUtil {
       
   }
 
-  async changeInSourceLocation() {
+  initTestResultFiles() {
     // a change was detected in the source location read all files 
-    log.debug('Change in source location reloading files'); 
+    log.debug('Preparing to search for results files'); 
     this.testResultFiles = [];
-    this.searchFiles(source, 'results.json');
+    //this.searchFiles(source, 'results.json');
   }
   async readDirectories() {  
     try {

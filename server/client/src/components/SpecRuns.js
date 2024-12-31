@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'; // Import uuid library
 
 const SpecRuns = () => {
 
-  const { setSpecRuns, specRuns, setTestSpecs, setTestResult, setNotification } = React.useContext(ApplicationContext);
+  const { specRuns, setTestResult} = React.useContext(ApplicationContext);
   
   return (
         <div className="card-body">
