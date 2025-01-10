@@ -16,10 +16,11 @@ export const ApplicationProvider = ({ children }) => {
   const [testResultDetail, setTestResultDetail] = useState();
   const [testSpecs, setTestSpecs] = useState([]);
   const [specRuns, setSpecRuns] = useState([]);
+  const [filter, setFilter] = useState({specs: []});
   
 
   return (
-    <ApplicationContext.Provider value={{ testResult, setTestResult, testResultDetail, setTestResultDetail, testSpecs, setTestSpecs, specRuns, setSpecRuns, notification, setNotification }}>
+    <ApplicationContext.Provider value={{ testResult, setTestResult, testResultDetail, setTestResultDetail, testSpecs, setTestSpecs, specRuns, setSpecRuns, notification, setNotification, filter, setFilter }}>
       {children}
     </ApplicationContext.Provider>
   );

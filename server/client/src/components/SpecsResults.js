@@ -2,15 +2,14 @@ import React from "react";
 import { ApplicationContext } from "../context/ApplicationContext";
 import TestResultDetail from "./TestResultDetail";
 import SpecRuns from "./SpecRuns";
+import Filter from "./Filter";
 
 
 const SpecsResults = () => {
 
  
-  const { setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns} = React.useContext(ApplicationContext);
+  const { setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns, setFilter, filter} = React.useContext(ApplicationContext);
   
-  
-
   React.useEffect(() => {
 
     if (!testSpecs || testSpecs.length === 0) {
@@ -21,10 +20,11 @@ const SpecsResults = () => {
           console.log("response testSpecs:" + response.status);
           return response.json();
         })
-        .then((data) => setTestSpecs(data))
+        .then((data) => applyFilterToSpecs(data))
+       // .then((data) => setTestSpecs(data))
         .catch((error) => console.error("Error fetching test results:", error));
     }
-  }, [setTestSpecs, testSpecs]);
+  }, [setTestSpecs, testSpecs, setFilter]);
 
   React.useEffect(() => { 
 
@@ -45,6 +45,21 @@ const SpecsResults = () => {
       eventSource.close();
     }
   }, [setNotification, notification]);
+
+ const applyFilterToSpecs = (data) => {
+    let filteredSpecs = data;
+    if (filter && filter.specs.length > 0) {
+      // Create a new array with only the filtered titles
+      const filteredTitles = filter.specs.filter(spec => !spec.filtered);
+
+      // Remove the unfiltered titles from the filteredSpecs map
+      filteredTitles.forEach(spec => {
+        delete filteredSpecs[spec.title];
+      });
+    }
+    setTestSpecs(filteredSpecs);
+  
+ };
 
  const openTitleAndClearDetails = (title) => {
   
@@ -75,7 +90,9 @@ const SpecsResults = () => {
 
  return (
     <div className="container">
+      
        <div className="row">
+       <Filter />
        <div className="col-md-5">
        <div className="card">
        <div className="card-header h100">
