@@ -27,11 +27,12 @@ const Filter = () => {
     const updatedFilter = { ...filter };
 
     updatedFilter.specs = updatedFilter.specs.map(spec =>
-      spec.title === name ? { ...spec, filtered: checked } : spec
+      (spec.title === name || name === 'all') ? { ...spec, filtered: checked } : spec
     );
 
     setFilter(updatedFilter);
   };
+
   
   return (
     <div>
@@ -46,6 +47,15 @@ const Filter = () => {
             <Collapse in={open}>
                 <Form>
                     <Form.Group controlId="selectedTitles" title="Titles">
+                        <Form.Check
+                            reverse
+                            type="checkbox"
+                            name="all"
+                            label="Select all"
+                            id="all"
+                            onChange={handleTitleChange}
+                            checked={filter?.specs?.every(spec => spec.filtered)}
+                        />
                     {filter?.specs?.length > 0 && filter.specs.map(spec => (
                         <Form.Check
                             reverse 
