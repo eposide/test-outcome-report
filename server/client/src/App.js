@@ -6,10 +6,10 @@ import { ApplicationContext } from "./context/ApplicationContext";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
-  const { isLoading } = React.useContext(ApplicationContext);
+  const { isLoadingData } = React.useContext(ApplicationContext);
   return (
     <>
-    { isLoading ? <Loader /> : <SpecsResults /> }
+    { isLoadingData ? <Loader /> : <SpecsResults /> }
     </>
   )};
 

@@ -7,14 +7,13 @@ import Loader from "./Loader";
 
 
 const SpecsResults = () => {
-
  
-  const {isLoading, setIsLoading, setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns, setFilter, filter} = React.useContext(ApplicationContext);
+  const {setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns, setFilter, filter, isLoadingData, setIsLoadingData } = React.useContext(ApplicationContext);
   
   React.useEffect(() => {
 
     if (!testSpecs || testSpecs.length === 0) {
-      setIsLoading(true);
+      setIsLoadingData(true);
     const url = `/api/testSpecs`;
     fetch(url, { method: 'GET' })
         .then((response) => {
@@ -22,12 +21,16 @@ const SpecsResults = () => {
           console.log("response testSpecs:" + response.status);
           return response.json();
         })
-        .then((data) => applyFilterToSpecs(data))    
-        .catch((error) => console.error("Error fetching test results:", error))
-        .finally(setIsLoading(false));
+        .then((data) => applyFilterToSpecs(data))  
+        .then(setIsLoadingData(false))  
+        .catch((error) => {
+          console.error("Error fetching test results:", error);
+          setIsLoadingData(false);
+        })
+      
 
     }
-  }, [setTestSpecs, testSpecs, setFilter]);
+  }, [setTestSpecs, testSpecs, setFilter, isLoadingData, setIsLoadingData]);
 
   React.useEffect(() => { 
 
@@ -72,7 +75,10 @@ const SpecsResults = () => {
 
  const handleRefresh = () => {
 
-    setIsLoading(true);
+    setIsLoadingData(true);
+    setTestSpecs([])
+    setTestResult(null);
+    setNotification("");
     const url = `/api/reload`;
     fetch(url, { method: 'GET' })
         .then((response) => {
@@ -81,12 +87,38 @@ const SpecsResults = () => {
           return response.json();
         })
         .then(() => {
+          setIsLoadingData(false);
           setTestSpecs([])
           setTestResult(null);
           setNotification("");
         })
-        .catch((error) => console.error("Error reloading tests:", error))
-        .finally(setIsLoading(false));
+        .catch((error) => console.error("Error reloading tests:", error));
+  };
+
+ const handleRefresh2 = () => {
+
+    setIsLoadingData(true);
+    setTestResult(null);
+    setTestSpecs(null);
+    setNotification("");
+    
+    const url = `/api/reload`;
+    fetch(url, { method: 'GET' })
+        .then((response) => {
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          console.log("response reload:" + response.status);
+          return response.json();
+        })
+        .then(() => {
+           setIsLoadingData(false);
+        //  setTestSpecs([])
+        //  setTestResult(null);
+        //  setNotification("");
+        })
+        .catch((error) => {
+          console.error("Error reloading tests:", error);
+          setIsLoadingData(false);
+        });
   };
 
   const hasFailedTest = (testSpec) => {
@@ -112,7 +144,7 @@ const SpecsResults = () => {
           </div>
        </div>
        <div className="h-5 card-body overflow-auto " style={{ maxHeight: "400px" }}>
-       {isLoading ? <Loader /> : Object.keys(testSpecs).map((title) => (
+       {isLoadingData ? <Loader /> : (Object.keys(testSpecs).map((title) => (
          <div key={title} className="card">
           <div role="button" 
             className={`card-header ${hasFailedTest(testSpecs[title]) ? 'bg-danger' : 'bg-info'}`}
@@ -122,7 +154,7 @@ const SpecsResults = () => {
           </div>
 
         </div>
-      ))}
+      )))}
       </div>
       <div className="col-md-15">
         {specRuns && specRuns.length > 0 && <SpecRuns specRuns={specRuns}/>}
