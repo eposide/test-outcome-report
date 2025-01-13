@@ -3,6 +3,7 @@ import { ApplicationContext } from "../context/ApplicationContext";
 import TestResultDetail from "./TestResultDetail";
 import SpecRuns from "./SpecRuns";
 import Filter from "./Filter";
+import Loader from "./Loader";
 
 
 const SpecsResults = () => {
@@ -93,6 +94,7 @@ const SpecsResults = () => {
   };
 
  return (
+  
     <div className="container">
       
        <div className="row">
@@ -110,7 +112,7 @@ const SpecsResults = () => {
           </div>
        </div>
        <div className="h-5 card-body overflow-auto " style={{ maxHeight: "400px" }}>
-       {Object.keys(testSpecs).map((title) => (
+       {isLoading ? <Loader /> : Object.keys(testSpecs).map((title) => (
          <div key={title} className="card">
           <div role="button" 
             className={`card-header ${hasFailedTest(testSpecs[title]) ? 'bg-danger' : 'bg-info'}`}
