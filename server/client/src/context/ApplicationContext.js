@@ -11,6 +11,7 @@ export const ApplicationContext = createContext({
 
 export const ApplicationProvider = ({ children }) => {
   
+  const [isLoading, setIsLoading] = useState(false)
   const [testResult, setTestResult] = useState();
   const [notification, setNotification] = useState("");
   const [testResultDetail, setTestResultDetail] = useState();
@@ -20,7 +21,7 @@ export const ApplicationProvider = ({ children }) => {
   
 
   return (
-    <ApplicationContext.Provider value={{ testResult, setTestResult, testResultDetail, setTestResultDetail, testSpecs, setTestSpecs, specRuns, setSpecRuns, notification, setNotification, filter, setFilter }}>
+    <ApplicationContext.Provider value={{ isLoading, setIsLoading, testResult, setTestResult, testResultDetail, setTestResultDetail, testSpecs, setTestSpecs, specRuns, setSpecRuns, notification, setNotification, filter, setFilter }}>
       {children}
     </ApplicationContext.Provider>
   );

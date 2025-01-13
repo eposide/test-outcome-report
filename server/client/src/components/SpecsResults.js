@@ -8,11 +8,12 @@ import Filter from "./Filter";
 const SpecsResults = () => {
 
  
-  const { setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns, setFilter, filter} = React.useContext(ApplicationContext);
+  const {isLoading, setIsLoading, setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns, setFilter, filter} = React.useContext(ApplicationContext);
   
   React.useEffect(() => {
 
     if (!testSpecs || testSpecs.length === 0) {
+      setIsLoading(true);
     const url = `/api/testSpecs`;
     fetch(url, { method: 'GET' })
         .then((response) => {
@@ -20,9 +21,10 @@ const SpecsResults = () => {
           console.log("response testSpecs:" + response.status);
           return response.json();
         })
-        .then((data) => applyFilterToSpecs(data))
-       // .then((data) => setTestSpecs(data))
-        .catch((error) => console.error("Error fetching test results:", error));
+        .then((data) => applyFilterToSpecs(data))    
+        .catch((error) => console.error("Error fetching test results:", error))
+        .finally(setIsLoading(false));
+
     }
   }, [setTestSpecs, testSpecs, setFilter]);
 
@@ -69,6 +71,7 @@ const SpecsResults = () => {
 
  const handleRefresh = () => {
 
+    setIsLoading(true);
     const url = `/api/reload`;
     fetch(url, { method: 'GET' })
         .then((response) => {
@@ -81,7 +84,8 @@ const SpecsResults = () => {
           setTestResult(null);
           setNotification("");
         })
-        .catch((error) => console.error("Error reloading tests:", error));
+        .catch((error) => console.error("Error reloading tests:", error))
+        .finally(setIsLoading(false));
   };
 
   const hasFailedTest = (testSpec) => {
