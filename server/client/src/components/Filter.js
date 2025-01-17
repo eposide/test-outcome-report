@@ -13,6 +13,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const Filter = () => { 
 
+  const [originalTestSpecs, setOriginalTestSpecs] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const { testSpecs, setTestSpecs, filter, setFilter } = React.useContext(ApplicationContext);
 
@@ -25,17 +26,21 @@ const Filter = () => {
       const specs = Object.keys(testSpecs).map(spec => ({title: spec, filtered: true}));
       updatedFilter.specs = specs
       setFilter(updatedFilter);
+      setOriginalTestSpecs(testSpecs);
     }
   }, [filter, testSpecs]);
 
   // Update the filter state when a checkbox is clicked
   const handleTitleChange = (event) => {
     const { name, checked } = event.target;
-    
+
+       
     const updatedFilter = { ...filter };
     updatedFilter.specs =  updatedFilter.specs.map(spec =>
       (spec.title === name || name === 'all') ? { ...spec, filtered: checked } : spec
     );
+    
+
     setFilter(updatedFilter);
     applyFilterToData(updatedFilter);
   };
@@ -57,7 +62,7 @@ const Filter = () => {
   const applyFilterToData = (updatedFilter) => {
     
     
-    let filteredSpecs = { ...testSpecs};
+    let filteredSpecs = { ...originalTestSpecs};
     if (updatedFilter && updatedFilter.specs.length > 0) {
       // Create a new array with only the filtered titles
       const filteredTitles = updatedFilter.specs.filter(spec => !spec.filtered);

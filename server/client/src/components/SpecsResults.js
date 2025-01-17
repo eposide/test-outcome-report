@@ -4,6 +4,7 @@ import TestResultDetail from "./TestResultDetail";
 import SpecRuns from "./SpecRuns";
 import Filter from "./Filter";
 import Loader from "./Loader";
+import Container from 'react-bootstrap/Container';
 
 
 const SpecsResults = () => {
@@ -89,9 +90,9 @@ const SpecsResults = () => {
 
  return (
   
-    <div className="container">
+    <Container fluid={true} className="p-0">
       
-       <div className="row">
+       <div className="row" style={{ width: "100%" }}>
       
        <div className="col-md-5">
        <div className="card">
@@ -107,19 +108,21 @@ const SpecsResults = () => {
            <Filter />
        </div>
 
-       <div className="h-5 card-body overflow-auto " style={{ maxHeight: "400px" }}>
-       {isLoadingData ? <Loader /> : (Object.keys(testSpecs).map((title) => (
-         <div key={title} className="card">
-          <div role="button" 
-            className={`card-header ${hasFailedTest(testSpecs[title]) ? 'bg-danger' : 'bg-info'}`}
-            onClick={() => openTitleAndClearDetails(title)}
-          >
+      <div className="h-5 card-body overflow-auto " style={{ maxHeight: "400px" }}>
+         {isLoadingData ? <Loader /> : (
+           Object.keys(testSpecs)
+            .map((title) => (
+            <div key={title} className="card">
+              <div role="button" 
+                className={`card-header ${hasFailedTest(testSpecs[title]) ? 'bg-danger' : 'bg-info'}`}
+              onClick={() => openTitleAndClearDetails(title)}
+              >
             {title} ({testSpecs[title].length} tests)
           </div>
-
         </div>
-      )))}
-      </div>
+      ))
+  )}
+</div>
       <div className="col-md-15">
         {specRuns && specRuns.length > 0 && <SpecRuns specRuns={specRuns}/>}
       </div>
@@ -131,7 +134,7 @@ const SpecsResults = () => {
       {testResult && <TestResultDetail testResult={testResult}  />}
       </div>
   </div>
-  </div>
+  </Container>
   );
 };
 
