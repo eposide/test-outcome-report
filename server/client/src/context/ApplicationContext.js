@@ -18,8 +18,9 @@ export const ApplicationProvider = ({ children }) => {
   const [testResultDetail, setTestResultDetail] = useState();
   const [testSpecs, setTestSpecs] = useState([]);
   const [specRuns, setSpecRuns] = useState([]);
-  const [filter, setFilter] = useState({specs: []});
+  const [filter, setFilter] = useState({specs: [], dateFrom: null, dateTo: null});
   const [isLoadingData, setIsLoadingData] = useState(false);
+ 
   
 
   return (

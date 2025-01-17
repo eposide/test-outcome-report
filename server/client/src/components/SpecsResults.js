@@ -8,7 +8,7 @@ import Loader from "./Loader";
 
 const SpecsResults = () => {
  
-  const {setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns, setFilter, filter, isLoadingData, setIsLoadingData } = React.useContext(ApplicationContext);
+  const {setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns, isLoadingData, setIsLoadingData, setFilter } = React.useContext(ApplicationContext);
   
   React.useEffect(() => {
 
@@ -21,7 +21,7 @@ const SpecsResults = () => {
           console.log("response testSpecs:" + response.status);
           return response.json();
         })
-        .then((data) => applyFilterToSpecs(data))  
+        .then((data) => setTestSpecs(data))  
         .then(setIsLoadingData(false))  
         .catch((error) => {
           console.error("Error fetching test results:", error);
@@ -30,7 +30,7 @@ const SpecsResults = () => {
       
 
     }
-  }, [setTestSpecs, testSpecs, setFilter, isLoadingData, setIsLoadingData]);
+  }, [setTestSpecs, testSpecs, isLoadingData, setIsLoadingData]);
 
   React.useEffect(() => { 
 
@@ -52,21 +52,7 @@ const SpecsResults = () => {
     }
   }, [setNotification, notification]);
 
- const applyFilterToSpecs = (data) => {
-    let filteredSpecs = data;
-    if (filter && filter.specs.length > 0) {
-      // Create a new array with only the filtered titles
-      const filteredTitles = filter.specs.filter(spec => !spec.filtered);
-
-      // Remove the unfiltered titles from the filteredSpecs map
-      filteredTitles.forEach(spec => {
-        delete filteredSpecs[spec.title];
-      });
-    }
-    setTestSpecs(filteredSpecs);
-  
- };
-
+ 
  const openTitleAndClearDetails = (title) => {
   
    setSpecRuns(testSpecs[title]);
@@ -78,6 +64,7 @@ const SpecsResults = () => {
     setIsLoadingData(true);
     setTestSpecs([])
     setTestResult(null);
+    setFilter({specs: [], dateFrom: null, dateTo: null});
     setNotification("");
     const url = `/api/reload`;
     fetch(url, { method: 'GET' })
@@ -95,32 +82,7 @@ const SpecsResults = () => {
         .catch((error) => console.error("Error reloading tests:", error));
   };
 
- const handleRefresh2 = () => {
-
-    setIsLoadingData(true);
-    setTestResult(null);
-    setTestSpecs(null);
-    setNotification("");
-    
-    const url = `/api/reload`;
-    fetch(url, { method: 'GET' })
-        .then((response) => {
-          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-          console.log("response reload:" + response.status);
-          return response.json();
-        })
-        .then(() => {
-           setIsLoadingData(false);
-        //  setTestSpecs([])
-        //  setTestResult(null);
-        //  setNotification("");
-        })
-        .catch((error) => {
-          console.error("Error reloading tests:", error);
-          setIsLoadingData(false);
-        });
-  };
-
+ 
   const hasFailedTest = (testSpec) => {
     return testSpec.some(test => test['status'] !== "passed");
   };
@@ -130,7 +92,7 @@ const SpecsResults = () => {
     <div className="container">
       
        <div className="row">
-       <Filter />
+      
        <div className="col-md-5">
        <div className="card">
        <div className="card-header h100">
@@ -142,7 +104,9 @@ const SpecsResults = () => {
                <p className="card-text">{notification}</p>
               </div> 
           </div>
+           <Filter />
        </div>
+
        <div className="h-5 card-body overflow-auto " style={{ maxHeight: "400px" }}>
        {isLoadingData ? <Loader /> : (Object.keys(testSpecs).map((title) => (
          <div key={title} className="card">
