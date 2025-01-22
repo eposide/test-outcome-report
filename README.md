@@ -25,31 +25,49 @@ LIMIT_TEST_RESULTS=5
 
 ## API Endpoints
 
-### GET /api/results/:jobNo
+### GET /api/testSpecs
+Fetches all the testSpecs that has been loaded in the database. It will limit the number of runs according to the configured number LIMIT_TEST_RESULTS
 
-Fetch test results for a specific job number.
+#### Response
+
+- 200 OK: Returns the test specs 
+- 500 Internal Server Error: If an error occurs while fetching the test specs.
+
+
+### GET /api/result/:resultId
+
+Fetch the test result for a result id. The response will be the test result output with all the details of the test
 
 #### Parameters
 
-- `jobNo` (string): The job number for which to fetch test results.
+- `resultId` (string): The id of the test result which was is associated with the test spec
 
 #### Response
 
-- 200 OK: Returns the test results for the specified job number.
+- 200 OK: Returns the test results for the specified resultId.
 - 500 Internal Server Error: If an error occurs while fetching the test results.
 
-### GET /api/results/testJobs
+### GET /api/reload 
 
-Fetch all the test jobs from the configured path.
-
-
+Will reload all test results from the configured path TEST_JOBS_LOCATION
 
 #### Response
 
-- 200 OK: Returns the test jobs.
-- 500 Internal Server Error: If an error occurs while fetching the test results.
+- 200 OK: reload was successful
+- 500 Internal Server Error: If an error occurs while reloading test results.
 
+### GET /api/report
 
+Downloads a csv file containing all tests in the database. The csv file has the following columns 
+  Title = name of the test 
+  TestDate = when the test was run 
+  Duration = how long it took to complete the test
+  Status = outcome of the test
+
+#### Response
+
+- 200 OK: a csv file which is downloaded to the client 
+- 500 Internal Server Error: If an error occurs while retrieving the report.
 
 # Test Outcome Report Client
 

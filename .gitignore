@@ -30,3 +30,6 @@ build/
 
 # database output
 data/
+
+# reports
+*.csv
