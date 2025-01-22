@@ -4,6 +4,7 @@ import TestResultDetail from "./TestResultDetail";
 import SpecRuns from "./SpecRuns";
 import Filter from "./Filter";
 import Loader from "./Loader";
+import Report from "./Report";
 import Container from 'react-bootstrap/Container';
 
 
@@ -97,15 +98,17 @@ const SpecsResults = () => {
        <div className="col-md-5">
        <div className="card">
        <div className="card-header h100">
+          <div className="row">         
+              <div className="col-md-4">
+               <Report />
+              </div> 
+          </div>
           <div className="row">
               <div className="col-md-4">
                  <button type="button" className="btn btn-outline-secondary btn-sm" onClick={() => handleRefresh()}>Refresh Tests</button>
               </div>
-              <div className="col">
-               <p className="card-text">{notification}</p>
-              </div> 
           </div>
-           <Filter />
+          <Filter />
        </div>
 
       <div className="h-5 card-body overflow-auto " style={{ maxHeight: "400px" }}>

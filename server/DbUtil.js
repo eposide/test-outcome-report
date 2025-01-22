@@ -114,7 +114,7 @@ class DBUtil {
   }
 
 
-  async getAllTestSpecs() { 
+  async getAllTestSpecsGrouped() { 
     log.debug("Fetching all specs");
     const testSpecs = await TestSpec.find().sort({title: 1, testDate: -1});
     const groupTestResults = testSpecs.reduce((acc, suite) => {
@@ -144,10 +144,10 @@ class DBUtil {
    * // Fetch the first 10 tests per spec
    * const first10TestSpecs = await dbUtil.getTestSpecs(10);
    */
-  async getTestSpecs(noOfTests) { 
+  async getTestSpecsGrouped(noOfTests) { 
 
       if (!noOfTests || noOfTests === 0 || noOfTests < 0) {
-        return this.getAllTestSpecs();
+        return this.getAllTestSpecsGrouped();
       }
 
       log.debug("Fetching " + noOfTests + " tests per spec");
@@ -165,6 +165,13 @@ class DBUtil {
             return acc;
           }, {});
       return groupTestResults;
+  }
+
+  async getAllTestSpecs() {
+
+    log.debug("Fetching all test specs");
+    const testSpecs = await TestSpec.find().sort({title: 1, testDate: -1});
+    return testSpecs;
   }
 
   

@@ -1,8 +1,9 @@
 const express = require('express');
 
 const fs = require('fs');
-const log4js = require('log4js');
 
+const log4js = require('log4js');
+const {Parser} = require('json2csv');
 const app = express();
 const path = require('path');
 
@@ -79,7 +80,7 @@ app.get('/api/testSpecs', async (req, res) => {
 
     try { 
         const noOfTestsPerSpec = parseInt(process.env.LIMIT_TEST_RESULTS) || 0;
-        const groupTestResults = await dbUtil.getTestSpecs(noOfTestsPerSpec);
+        const groupTestResults = await dbUtil.getTestSpecsGrouped(noOfTestsPerSpec);
         res.json(groupTestResults);
     } catch (error) {
         log.error(error);
@@ -96,6 +97,38 @@ app.get('/api/reload', async (req, res) => {
         log.error(error);
         res.status(500).send({ error: 'Unable to reload files' });
     }
+});
+
+app.get('/api/report', async (req, res) => { 
+    try {
+        const reportData = await dbUtil.getAllTestSpecs();
+
+        const data = Object.values(reportData).map(spec => ({
+
+            Title: spec.title,
+            TestDate: spec.testDate,
+            Duration: spec.duration,
+            Status: spec.status,
+        }));
+        
+        const fields = ['Title', 'TestDate', 'Duration', 'Status'];
+        
+        const parser = new Parser({ fields });
+        const separatorLine = '"sep=,"' + '\r\n';
+        const csv = separatorLine + parser.parse(data);
+
+
+        //save the csv as a file
+        const filePath = path.join(__dirname, 'test-results.csv');
+        fs.writeFileSync(filePath, csv);
+
+        res.download(filePath); // Set disposition and send it.
+
+       
+    } catch (error) {
+        log.error(error);
+        res.status(500).send({ error: 'Unable to fetch report data' });
+    } 
 });
 
 app.get("/events", async (req, res) => {
