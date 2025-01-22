@@ -5,7 +5,7 @@ The server component provides an API for fetching test results.
 ## Installation
 
 1. Install Node.js and npm (https://nodejs.org/)
-2. Clone the repository: `git clone https://github.com/your-username/test-outcome-report.git`
+2. Clone the repository
 3. Navigate to the server directory: `cd test-outcome-report/server`
 4. Install dependencies: `npm run install-app`
 5. Run the application: `npm start`
