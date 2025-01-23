@@ -53,14 +53,12 @@ async function reloadFiles(sendToClients) {
         reloading = true; // prevent multiple reloads while waiting for the file change event
         fileUtil.initTestResultFiles();
         const files = await fileUtil.searchFiles(process.env.TEST_JOBS_LOCATION, 'results.json');
-        log.debug('Should populate database ' + (noOfFiles != files.length));
-        if (noOfFiles != files.length) {
-            await dbUtil.populateTestResultDatabase(files);
-            if (sendToClients) { 
-                sendEvent('New test results arrived!');
-            }
-            noOfFiles = files.length; // update the number of files to the current count
+        await dbUtil.populateTestResultDatabase(files);
+        if (sendToClients) { 
+            sendEvent('New test results arrived!');
         }
+        noOfFiles = files.length; // update the number of files to the current count
+        
         reloading = false; // reset the reload flag when the file change event is processed
     }
 }
@@ -146,7 +144,7 @@ app.get("/events", async (req, res) => {
         log.debug(`Event type: ${eventType} on source: ${eventSource}`);
         
         if (!reloading) {
-            reloadFiles(true);
+            await reloadFiles(true);
         }
   });
 
