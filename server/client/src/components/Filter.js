@@ -8,6 +8,7 @@ import Collapse from "react-bootstrap/Collapse";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
+import "./Filter.css";
 
 
 
@@ -137,6 +138,8 @@ const Filter = () => {
                           onChange={handleDateFromChange}
                           placeholderText="Select a date"
                           id="dateFrom"
+                        
+
                         />
                     </Col>
                     <Col>

@@ -12,27 +12,26 @@ const SpecsResults = () => {
  
   const {setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns, isLoadingData, setIsLoadingData, setFilter } = React.useContext(ApplicationContext);
   
+
   React.useEffect(() => {
 
     if (!testSpecs || testSpecs.length === 0) {
       setIsLoadingData(true);
-    const url = `/api/testSpecs`;
-    fetch(url, { method: 'GET' })
+      const url = `/api/testSpecs`;
+      fetch(url, { method: 'GET' })
         .then((response) => {
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           console.log("response testSpecs:" + response.status);
           return response.json();
         })
-        .then((data) => setTestSpecs(data))  
-        .then(setIsLoadingData(false))  
+         .then((data) => setTestSpecs(data))  
+         .then(setIsLoadingData(false))  
         .catch((error) => {
           console.error("Error fetching test results:", error);
           setIsLoadingData(false);
         })
-      
-
-    }
-  }, [setTestSpecs, testSpecs, isLoadingData, setIsLoadingData]);
+      }
+  }, [testSpecs, isLoadingData]);
 
   React.useEffect(() => { 
 
@@ -63,25 +62,25 @@ const SpecsResults = () => {
 
  const handleRefresh = () => {
 
-    setIsLoadingData(true);
+   // setIsLoadingData(true);
     setTestSpecs([])
     setTestResult(null);
     setFilter({specs: [], dateFrom: null, dateTo: null});
     setNotification("");
-    const url = `/api/reload`;
-    fetch(url, { method: 'GET' })
-        .then((response) => {
-          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-          console.log("response reload:" + response.status);
-          return response.json();
-        })
-        .then(() => {
-          setIsLoadingData(false);
-          setTestSpecs([])
-          setTestResult(null);
-          setNotification("");
-        })
-        .catch((error) => console.error("Error reloading tests:", error));
+    //const url = `/api/reload`;
+    //fetch(url, { method: 'GET' })
+    //    .then((response) => {
+    //      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    //      console.log("response reload:" + response.status);
+    //      return response.json();
+    //    })
+    //    .then(() => {
+    //      setIsLoadingData(false);
+    //      setTestSpecs([])
+    //      setTestResult(null);
+    //      setNotification("");
+    //    })
+    //    .catch((error) => console.error("Error reloading tests:", error));
   };
 
  

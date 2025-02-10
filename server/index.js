@@ -78,7 +78,9 @@ app.get('/api/testSpecs', async (req, res) => {
 
     try { 
         const noOfTestsPerSpec = parseInt(process.env.LIMIT_TEST_RESULTS) || 0;
+        await reloadFiles(false);
         const groupTestResults = await dbUtil.getTestSpecsGrouped(noOfTestsPerSpec);
+        log.debug("results " + groupTestResults);
         res.json(groupTestResults);
     } catch (error) {
         log.error(error);
