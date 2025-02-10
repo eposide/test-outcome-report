@@ -47,14 +47,14 @@ const Filter = () => {
 
   const handleDateFromChange = (date) => {
      const updatedFilter = { ...filter };
-     updatedFilter.dateFrom = date;
+     updatedFilter.dateFrom = new Date(date.setHours(0, 0, 0, 0)); // Set time to minimum
      setFilter(updatedFilter);
      applyFilterToData(updatedFilter);
   }
 
   const handleDateToChange = (date) => {
      const updatedFilter = {...filter };
-     updatedFilter.dateTo = date;
+     updatedFilter.dateTo = new Date(date.setHours(23, 59, 59, 999)); // Set time to maximum
      setFilter(updatedFilter);
      applyFilterToData(updatedFilter);
   }

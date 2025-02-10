@@ -17,8 +17,9 @@ const Report = () => {
       .then((blob) => {
         const url = window.URL.createObjectURL(new Blob([blob]));
         const link = document.createElement("a");
+        const fileName = "test-results-" + new Date().toISOString().replace('T', ' ').substring(0, 19) + ".csv";
         link.href = url;
-        link.setAttribute("download", "test-results.csv"); // or any other file extension
+        link.setAttribute("download", fileName); // or any other file extension
         document.body.appendChild(link);
         link.click();
       })
