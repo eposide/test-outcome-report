@@ -5,6 +5,7 @@ import SpecRuns from "./SpecRuns";
 import Filter from "./Filter";
 import Loader from "./Loader";
 import Report from "./Report";
+import TestStatusMeter from "./TestStatusMeter";
 import Container from 'react-bootstrap/Container';
 
 
@@ -62,31 +63,25 @@ const SpecsResults = () => {
 
  const handleRefresh = () => {
 
-   // setIsLoadingData(true);
+   
     setTestSpecs([])
     setTestResult(null);
     setFilter({specs: [], dateFrom: null, dateTo: null});
     setNotification("");
-    //const url = `/api/reload`;
-    //fetch(url, { method: 'GET' })
-    //    .then((response) => {
-    //      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    //      console.log("response reload:" + response.status);
-    //      return response.json();
-    //    })
-    //    .then(() => {
-    //      setIsLoadingData(false);
-    //      setTestSpecs([])
-    //      setTestResult(null);
-    //      setNotification("");
-    //    })
-    //    .catch((error) => console.error("Error reloading tests:", error));
+    
   };
 
- 
-  const hasFailedTest = (testSpec) => {
-    return testSpec.some(test => test['status'] !== "passed");
-  };
+   //build a list of boolean statuses from a testSpec
+    const testStatuses = (testSpec) => {
+      let acc = [];
+
+      testSpec.forEach(function (test) {
+        acc[test['testDate']] = test['status'] == "passed";
+      });
+
+      return acc;
+      
+   };
 
  return (
   
@@ -114,12 +109,13 @@ const SpecsResults = () => {
          {isLoadingData ? <Loader /> : (
            Object.keys(testSpecs)
             .map((title) => (
-            <div key={title} className="card">
+            <div key={title} className="card" style={{ height: "50px", fontSize: "0.8rem" }}>
               <div role="button" 
-                className={`card-header ${hasFailedTest(testSpecs[title]) ? 'bg-danger' : 'bg-info'}`}
+                className={'card-header'}
               onClick={() => openTitleAndClearDetails(title)}
               >
             {title} ({testSpecs[title].length} tests)
+            <TestStatusMeter testStatuses={testStatuses(testSpecs[title])} />
           </div>
         </div>
       ))

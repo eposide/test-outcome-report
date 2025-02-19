@@ -8,7 +8,7 @@ const SpecRuns = () => {
   
   return (
         <div className="card-body">
-            <table className="table table-striped">
+            <table className="table table-striped" style={{ fontSize: "0.8rem" }}>
                 <thead>
                   <tr>
                     <th>Date</th>
