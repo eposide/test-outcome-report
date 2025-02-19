@@ -82,6 +82,7 @@ app.get('/api/testSpecs', async (req, res) => {
         const groupTestResults = await dbUtil.getTestSpecsGrouped(noOfTestsPerSpec);
         log.debug("results " + groupTestResults);
         res.json(groupTestResults);
+        
     } catch (error) {
         log.error(error);
         res.status(500).send({ error: 'Unable to fetch test specs' });
