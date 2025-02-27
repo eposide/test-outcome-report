@@ -25,14 +25,18 @@ const SpecsResults = () => {
           console.log("response testSpecs:" + response.status);
           return response.json();
         })
-         .then((data) => setTestSpecs(data))  
-         .then(setIsLoadingData(false))  
+         .then((data) => 
+         {
+          setTestSpecs(data);
+          setIsLoadingData(false); 
+         } 
+        )         
         .catch((error) => {
           console.error("Error fetching test results:", error);
           setIsLoadingData(false);
         })
       }
-  }, [testSpecs, isLoadingData]);
+  }, [testSpecs, isLoadingData, setIsLoadingData]);
 
   React.useEffect(() => { 
 
@@ -64,6 +68,7 @@ const SpecsResults = () => {
  const handleRefresh = () => {
 
    
+
     setTestSpecs([])
     setTestResult(null);
     setFilter({specs: [], dateFrom: null, dateTo: null});
