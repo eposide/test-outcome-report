@@ -7,11 +7,11 @@ import Loader from "./Loader";
 import Report from "./Report";
 import TestStatusMeter from "./TestStatusMeter";
 import Container from 'react-bootstrap/Container';
-
+import "./SpecResults.css";
 
 const SpecsResults = () => {
  
-  const {setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns, isLoadingData, setIsLoadingData, setFilter } = React.useContext(ApplicationContext);
+  const {setTestSpecs, testSpecs , setTestResult, testResult, notification, setNotification, setSpecRuns, specRuns, isLoadingData, setIsLoadingData, setFilter, selectedTitle, setSelectedTitle } = React.useContext(ApplicationContext);
   
 
   React.useEffect(() => {
@@ -67,14 +67,14 @@ const SpecsResults = () => {
 
  const handleRefresh = () => {
 
-   
-
     setTestSpecs([])
     setTestResult(null);
     setFilter({specs: [], dateFrom: null, dateTo: null});
     setNotification("");
     
   };
+
+  
 
    //build a list of boolean statuses from a testSpec
     const testStatuses = (testSpec) => {
@@ -110,14 +110,17 @@ const SpecsResults = () => {
           <Filter />
        </div>
 
-      <div className="h-5 card-body overflow-auto " style={{ maxHeight: "400px" }}>
+     <div className="h-5 card-body overflow-auto " style={{ maxHeight: "400px" }}>
          {isLoadingData ? <Loader /> : (
            Object.keys(testSpecs)
             .map((title) => (
             <div key={title} className="card" style={{ height: "50px", fontSize: "0.8rem" }}>
               <div role="button" 
-                className={'card-header'}
-              onClick={() => openTitleAndClearDetails(title)}
+                className={`card-header ${title === selectedTitle ? 'selected' : ''}`}
+              onClick={() => {
+                openTitleAndClearDetails(title);
+                setSelectedTitle(title);
+              }}
               >
             {title} ({testSpecs[title].length} tests)
             <TestStatusMeter testStatuses={testStatuses(testSpecs[title])} />
