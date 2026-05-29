@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${title} ?: 'Test Outcome Report'">Test Outcome Report</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}" />
+</head>
+<body>
+<header th:fragment="header">
+    <div class="container">
+        <div>
+            <h1>Test Outcome Report</h1>
+            <div class="subtitle">View test history and upload JUnit XML or JSON payloads</div>
+        </div>
+        <nav>
+            <a th:href="@{/}" title="Dashboard">Dashboard</a>
+            <a th:href="@{/test-history/}" title="Test History">Test History</a>
+            <a th:href="@{/file-upload}" title="Upload">Upload</a>
+        </nav>
+    </div>
+</header>
+</body>
+</html>
+

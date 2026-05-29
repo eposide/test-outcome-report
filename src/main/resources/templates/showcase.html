@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Theme Showcase</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}" />
+    <style>
+        .showcase-section {
+            margin-bottom: 3rem;
+        }
+        .showcase-section h2 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .showcase-item {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-200);
+        }
+        code {
+            background: var(--gray-100);
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="fragments/header :: header"></header>
+
+<main>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">Theme Component Showcase</div>
+            <div class="card-body">
+                <p>This page demonstrates all available components in the Test Outcome Report theme.</p>
+
+                <!-- Alerts -->
+                <div class="showcase-section">
+                    <h2>Alerts</h2>
+                    <div class="alert alert-info">
+                        <strong>Info Alert:</strong> This is an informational message.
+                    </div>
+                    <div class="alert alert-success">
+                        <strong>Success Alert:</strong> Operation completed successfully!
+                    </div>
+                    <div class="alert alert-warning">
+                        <strong>Warning Alert:</strong> Please review this important message.
+                    </div>
+                    <div class="alert alert-danger">
+                        <strong>Danger Alert:</strong> This is an error message.
+                    </div>
+                </div>
+
+                <!-- Badges -->
+                <div class="showcase-section">
+                    <h2>Badges</h2>
+                    <div class="showcase-grid">
+                        <div class="showcase-item">
+                            <code>.badge-success</code>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="badge badge-success">PASSED</span>
+                            </div>
+                        </div>
+                        <div class="showcase-item">
+                            <code>.badge-danger</code>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="badge badge-danger">FAILED</span>
+                            </div>
+                        </div>
+                        <div class="showcase-item">
+                            <code>.badge-warning</code>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="badge badge-warning">SKIPPED</span>
+                            </div>
+                        </div>
+                        <div class="showcase-item">
+                            <code>.badge-info</code>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="badge badge-info">INFO</span>
+                            </div>
+                        </div>
+                        <div class="showcase-item">
+                            <code>.badge-neutral</code>
+                            <div style="margin-top: 0.5rem;">
+                                <span class="badge badge-neutral">PENDING</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="showcase-section">
+                    <h2>Buttons</h2>
+                    <div class="btn-group" style="margin-bottom: 1rem;">
+                        <button class="btn btn-primary">Primary Button</button>
+                        <button class="btn btn-secondary">Secondary Button</button>
+                        <button class="btn btn-success">Success Button</button>
+                        <button class="btn btn-danger">Danger Button</button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-primary btn-small">Small Primary</button>
+                        <button class="btn btn-secondary btn-small">Small Secondary</button>
+                        <a href="#" class="btn btn-primary btn-small">Link Button</a>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="showcase-section">
+                    <h2>Statistics Grid</h2>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">Total Tests</div>
+                            <div class="stat-value">1,234</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Passed</div>
+                            <div class="stat-value" style="color: var(--success-color);">1,150</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Failed</div>
+                            <div class="stat-value" style="color: var(--danger-color);">45</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Skipped</div>
+                            <div class="stat-value" style="color: var(--warning-color);">39</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Pass Rate</div>
+                            <div class="stat-value">93.2%</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Avg Duration</div>
+                            <div class="stat-value">125<span class="stat-unit">ms</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Forms -->
+                <div class="showcase-section">
+                    <h2>Form Elements</h2>
+                    <form>
+                        <div class="form-group">
+                            <label for="text-input">Text Input</label>
+                            <input type="text" id="text-input" placeholder="Enter text..." />
+                        </div>
+                        <div class="form-group">
+                            <label for="email-input">Email Input</label>
+                            <input type="email" id="email-input" placeholder="Enter email..." />
+                        </div>
+                        <div class="form-group">
+                            <label for="select-input">Select Input</label>
+                            <select id="select-input">
+                                <option>-- Choose an option --</option>
+                                <option>Option 1</option>
+                                <option>Option 2</option>
+                                <option>Option 3</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="textarea-input">Textarea</label>
+                            <textarea id="textarea-input" placeholder="Enter your message..."></textarea>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tables -->
+                <div class="showcase-section">
+                    <h2>Tables</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Name</th>
+                                <th>Class</th>
+                                <th>Status</th>
+                                <th class="text-center">Duration (ms)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>testDashboardLoad</td>
+                                <td>DashboardControllerTest</td>
+                                <td><span class="badge badge-success">PASSED</span></td>
+                                <td class="text-center">45</td>
+                            </tr>
+                            <tr>
+                                <td>testInvalidUpload</td>
+                                <td>UploadControllerTest</td>
+                                <td><span class="badge badge-danger">FAILED</span></td>
+                                <td class="text-center">123</td>
+                            </tr>
+                            <tr>
+                                <td>testDeprecatedMethod</td>
+                                <td>LegacyParserTest</td>
+                                <td><span class="badge badge-warning">SKIPPED</span></td>
+                                <td class="text-center">0</td>
+                            </tr>
+                            <tr>
+                                <td>testReportGeneration</td>
+                                <td>ReportServiceTest</td>
+                                <td><span class="badge badge-success">PASSED</span></td>
+                                <td class="text-center">234</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Utility Classes -->
+                <div class="showcase-section">
+                    <h2>Utility Classes</h2>
+                    <div style="background: var(--gray-100); padding: 1rem; border-radius: var(--border-radius);">
+                        <div class="text-center" style="margin-bottom: 1rem;">
+                            <code>.text-center</code> - This text is centered
+                        </div>
+                        <div class="text-right" style="margin-bottom: 1rem;">
+                            <code>.text-right</code> - This text is right-aligned
+                        </div>
+                        <div class="text-muted" style="margin-bottom: 1rem;">
+                            <code>.text-muted</code> - This text is muted (gray)
+                        </div>
+                        <div class="flex-between" style="background: white; padding: 1rem; border-radius: 4px;">
+                            <code>.flex-between</code>
+                            <span>Spaced apart</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spacing Examples -->
+                <div class="showcase-section">
+                    <h2>Spacing Utilities</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div style="background: var(--gray-100); padding: 1rem; border-radius: var(--border-radius);">
+                            <code>.mt-1, .mt-2, .mt-3, .mt-4</code>
+                            <p style="margin: 0;">Margin Top</p>
+                        </div>
+                        <div style="background: var(--gray-100); padding: 1rem; border-radius: var(--border-radius);">
+                            <code>.mb-1, .mb-2, .mb-3, .mb-4</code>
+                            <p style="margin: 0;">Margin Bottom</p>
+                        </div>
+                        <div style="background: var(--gray-100); padding: 1rem; border-radius: var(--border-radius);">
+                            <code>.p-2, .p-3, .p-4</code>
+                            <p style="margin: 0;">Padding</p>
+                        </div>
+                        <div style="background: var(--gray-100); padding: 1rem; border-radius: var(--border-radius);">
+                            <code>.gap-1, .gap-2, .gap-3</code>
+                            <p style="margin: 0;">Gap Between Items</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cards -->
+                <div class="showcase-section">
+                    <h2>Cards</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                        <div class="card">
+                            <div class="card-header">Card Header</div>
+                            <div class="card-body">
+                                <p>This is a card component with a header and body. Cards are useful for grouping content.</p>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">Another Card</div>
+                            <div class="card-body">
+                                <button class="btn btn-primary">Action</button>
+                                <button class="btn btn-secondary" style="margin-left: 0.5rem;">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Color Palette -->
+                <div class="showcase-section">
+                    <h2>Color Palette</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                        <div style="border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow-sm);">
+                            <div style="background: var(--primary-color); height: 80px;"></div>
+                            <div style="padding: 0.75rem; font-size: 0.875rem; font-weight: 600;">Primary<br /><code>#2b6cb0</code></div>
+                        </div>
+                        <div style="border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow-sm);">
+                            <div style="background: var(--success-color); height: 80px;"></div>
+                            <div style="padding: 0.75rem; font-size: 0.875rem; font-weight: 600;">Success<br /><code>#10b981</code></div>
+                        </div>
+                        <div style="border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow-sm);">
+                            <div style="background: var(--danger-color); height: 80px;"></div>
+                            <div style="padding: 0.75rem; font-size: 0.875rem; font-weight: 600;">Danger<br /><code>#ef4444</code></div>
+                        </div>
+                        <div style="border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow-sm);">
+                            <div style="background: var(--warning-color); height: 80px;"></div>
+                            <div style="padding: 0.75rem; font-size: 0.875rem; font-weight: 600;">Warning<br /><code>#f59e0b</code></div>
+                        </div>
+                        <div style="border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow-sm);">
+                            <div style="background: var(--info-color); height: 80px;"></div>
+                            <div style="padding: 0.75rem; font-size: 0.875rem; font-weight: 600;">Info<br /><code>#06b6d4</code></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="fragments/footer :: footer"></footer>
+</body>
+</html>
+

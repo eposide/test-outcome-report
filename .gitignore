@@ -1,35 +1,30 @@
-# Node.js dependencies
-node_modules/
-npm-debug.log
-yarn-error.log
+# Maven
+target/
+*.jar
+*.war
+*.zip
 
-# Environment variables
-.env
-
-# Logs
-logs/
-*.log
-
-# Temporary files
-tmp/
-temp/
-
-# IDE specific files
+# IDE
 .idea/
 .vscode/
-*.sublime-project
-*.sublime-workspace
-
-# Operating system files
+*.swp
+*.swo
+*~
 .DS_Store
-Thumbs.db
+*.iml
 
-# Build outputs
-dist/
-build/
+# Build
+*.class
+*.log
 
-# database output
+# Environment
+.env
+.env.local
+
+# MongoDB
 data/
+mongo_data/
 
-# reports
-*.csv
+# Node (if adding frontend later)
+node_modules/
+npm-debug.log

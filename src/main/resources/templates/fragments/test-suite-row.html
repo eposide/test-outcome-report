@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<!-- Recursive fragment for displaying test suites with nested structure -->
+<div th:fragment="displaySuite(suite, level)">
+    <!-- Suite Header Card -->
+    <div style="margin-bottom: 1.5rem; padding-left: calc(var(--level) * 1.5rem);" th:style="'--level:' + ${level}">
+        <div class="card" style="background-color: var(--gray-50); border-left: 4px solid var(--primary-color);">
+            <div class="card-header" style="font-size: 1rem; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center;">
+                <span th:text="${suite.name}" style="font-weight: 600;"></span>
+                <span th:if="${suite.testCases != null and !suite.testCases.isEmpty()}" style="font-size: 0.875rem; color: var(--gray-600);">
+                    <span th:text="${suite.testCases.size()} + ' test case(s)'"></span>
+                </span>
+            </div>
+            <div class="card-body">
+                <!-- Test Cases Table -->
+                <div th:if="${suite.testCases != null and !suite.testCases.isEmpty()}">
+                    <table style="margin-bottom: 1.5rem;">
+                        <thead>
+                            <tr>
+                                <th>Test Case Name</th>
+                                <th>File Path</th>
+                                <th>Status</th>
+                                <th class="text-center">Duration (ms)</th>
+                                <th>Error Message</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="testCase : ${suite.testCases}">
+                                <td th:text="${testCase.name}"></td>
+                                <td class="text-muted" style="font-size: 0.875rem;" th:text="${testCase.filePath != null ? testCase.filePath : '-'}"></td>
+                                <td>
+                                    <span th:if="${testCase.status.name() == 'PASSED'}" class="badge badge-success" th:text="${testCase.status}"></span>
+                                    <span th:if="${testCase.status.name() == 'FAILED'}" class="badge badge-danger" th:text="${testCase.status}"></span>
+                                    <span th:if="${testCase.status.name() == 'SKIPPED'}" class="badge badge-warning" th:text="${testCase.status}"></span>
+                                    <span th:if="${testCase.status.name() != 'PASSED' and testCase.status.name() != 'FAILED' and testCase.status.name() != 'SKIPPED'}" class="badge badge-neutral" th:text="${testCase.status}"></span>
+                                </td>
+                                <td class="text-center" th:text="${testCase.durationMs}"></td>
+                                <td class="text-muted" style="font-size: 0.875rem; max-width: 400px; word-wrap: break-word;" th:text="${testCase.errorMessage != null ? testCase.errorMessage : '-'}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Nested Test Suites -->
+                <div th:if="${suite.suites != null and !suite.suites.isEmpty()}">
+                    <div style="margin-top: 1.5rem; border-top: 1px solid var(--gray-200); padding-top: 1.5rem;">
+                        <h4 style="font-size: 0.95rem; color: var(--gray-700); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Nested Suites</h4>
+                        <div th:each="nestedSuite : ${suite.suites}">
+                            <div th:replace="this :: displaySuite(suite=${nestedSuite}, level=${level + 1})"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

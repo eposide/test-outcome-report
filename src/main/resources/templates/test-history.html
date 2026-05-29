@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Details</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}" />
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<script th:inline="javascript">
+    var testHistoryUrl = /*[[@{/test-history/}]]*/ '/test-history/';
+    function submitForm() {
+        const projectInput = document.getElementById('project');
+        if (projectInput.value) {
+            window.location.href = testHistoryUrl +  encodeURIComponent(projectInput.value);
+        }
+        return projectInput.value;
+    }
+    var runDetailsUrl = /*[[@{/run-details/}]]*/ '/run-details/';
+    function rowClicked(id) {
+        location.href = runDetailsUrl + id;
+    }
+</script>
+
+<main>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <form style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <div class="form-group">
+                        <label for="project">Project Name <span style="color: var(--danger-color);">*</span></label>
+                        <select class="form-control" id="project" name="project" onchange="submitForm()">
+                            <option value="" disabled selected>Select a project</option>
+                            <option th:each="project : ${projects}" th:value="${project}" th:text="${project}"></option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">Test History</div>
+            <div class="card-body">
+                <div th:if="${testRuns == null or testRuns.isEmpty()}" class="alert alert-info">
+                    <strong>No test runs found for the selected project.</strong> Please upload test results to see the history.
+                </div>
+
+                <div th:if="${testRuns != null and !testRuns.isEmpty()}">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th class="text-center">Total Tests</th>
+                            <th class="text-center">Passed</th>
+                            <th class="text-center">Failed</th>
+                            <th class="text-center">Skipped</th>
+                            <th class="text-center">Pass Rate</th>
+                            <th class="text-center">Duration (ms)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="run : ${testRuns}" th:data-id="${run.id}" onclick="rowClicked(this.getAttribute('data-id'))" style="cursor: pointer;">
+                            <td th:text="${run.timestamp}"></td>
+                            <td class="text-center" th:text="${run.summary != null ? run.summary.totalTests : '-'}"></td>
+                            <td class="text-center">
+                                    <span th:if="${run.summary != null}">
+                                        <span class="badge badge-success" th:text="${run.summary.passedTests}"></span>
+                                    </span>
+                                <span th:if="${run.summary == null}">-</span>
+                            </td>
+                            <td class="text-center">
+                                    <span th:if="${run.summary != null && run.summary.failedTests > 0}">
+                                        <span class="badge badge-danger" th:text="${run.summary.failedTests}"></span>
+                                    </span>
+                                <span th:if="${run.summary == null or run.summary.failedTests == 0}">
+                                        <span class="badge badge-neutral" th:text="${run.summary != null ? run.summary.failedTests : '-'}"></span>
+                                    </span>
+                            </td>
+                            <td class="text-center">
+                                    <span th:if="${run.summary != null && run.summary.skippedTests > 0}">
+                                        <span class="badge badge-warning" th:text="${run.summary.skippedTests}"></span>
+                                    </span>
+                                <span th:if="${run.summary == null or run.summary.skippedTests == 0}">
+                                        <span class="badge badge-neutral" th:text="${run.summary != null ? run.summary.skippedTests : '-'}"></span>
+                                    </span>
+                            </td>
+                            <td class="text-center">
+                                    <span th:if="${run.summary != null}">
+                                        <span th:classappend="${run.summary.passRate >= 80 ? '' : 'text-muted'}" th:text="${#numbers.formatDecimal(run.summary.passRate, 1, 1)} + '%'"></span>
+                                    </span>
+                                <span th:if="${run.summary == null}">-</span>
+                            </td>
+                            <td class="text-center" th:text="${run.summary != null ? run.summary.totalDurationMs : '-'}"></td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

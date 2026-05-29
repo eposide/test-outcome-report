@@ -1,0 +1,198 @@
+{
+  "config": {
+    "configFile": "playwright.config.ts",
+    "rootDir": "/home/user/project",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "workers": 4,
+    "timeout": 30000,
+    "expect": {
+      "timeout": 5000
+    },
+    "outputFolder": "test-results",
+    "updateSnapshots": "missing",
+    "use": {
+      "baseURL": "http://localhost:3000",
+      "headless": true
+    }
+  },
+  "suites": [
+    {
+      "title": "Authentication Tests",
+      "file": "tests/auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "should log in with valid credentials",
+          "file": "tests/auth.spec.ts",
+          "line": 10,
+          "column": 0,
+          "tests": [
+            {
+              "timeout": 30000,
+              "results": [
+                {
+                  "duration": 2500,
+                  "status": "passed",
+                  "errors": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "should fail with invalid password",
+          "file": "tests/auth.spec.ts",
+          "line": 20,
+          "column": 0,
+          "tests": [
+            {
+              "timeout": 30000,
+              "results": [
+                {
+                  "duration": 1800,
+                  "status": "passed",
+                  "errors": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "should display remember me option",
+          "file": "tests/auth.spec.ts",
+          "line": 30,
+          "column": 0,
+          "tests": [
+            {
+              "timeout": 30000,
+              "results": [
+                {
+                  "duration": 0,
+                  "status": "skipped",
+                  "errors": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Dashboard",
+      "file": "tests/dashboard.spec.ts",
+      "column": 0,
+      "line": 0,
+      "suites": [
+        {
+          "title": "User Profile",
+          "file": "tests/dashboard.spec.ts",
+          "column": 0,
+          "line": 50,
+          "specs": [
+            {
+              "title": "should display user profile",
+              "file": "tests/dashboard.spec.ts",
+              "line": 60,
+              "column": 0,
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "results": [
+                    {
+                      "duration": 1200,
+                      "status": "passed",
+                      "errors": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "should update profile picture",
+              "file": "tests/dashboard.spec.ts",
+              "line": 70,
+              "column": 0,
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "results": [
+                    {
+                      "duration": 3500,
+                      "status": "failed",
+                      "error": {
+                        "message": "Expected element to be visible",
+                        "stack": "Error: Expected element to be visible\n at test/dashboard.spec.ts:75:20"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Settings",
+          "file": "tests/dashboard.spec.ts",
+          "column": 0,
+          "line": 100,
+          "specs": [
+            {
+              "title": "should save preferences",
+              "file": "tests/dashboard.spec.ts",
+              "line": 110,
+              "column": 0,
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "results": [
+                    {
+                      "duration": 2100,
+                      "status": "passed",
+                      "errors": []
+                    },
+                    {
+                      "duration": 2050,
+                      "status": "passed",
+                      "errors": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Search Functionality",
+      "file": "tests/search.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "should search for products",
+          "file": "tests/search.spec.ts",
+          "line": 10,
+          "column": 0,
+          "tests": [
+            {
+              "timeout": 30000,
+              "results": [
+                {
+                  "duration": 5600,
+                  "status": "failed",
+                  "error": {
+                    "message": "Timeout waiting for search results",
+                    "stack": "TimeoutError: Timeout waiting for search results\n at test/search.spec.ts:25:15"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

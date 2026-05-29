@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Details</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}" />
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <div class="flex-between">
+                    <span th:text="${testRun != null ? testRun.project : 'Test Run'}"></span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div th:if="${testRun == null}" class="alert alert-info">
+                    <strong>Test run not found.</strong>
+                </div>
+
+                <div th:if="${testRun != null}">
+                    <!-- Test Run Summary -->
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">Total Tests</div>
+                            <div class="stat-value" th:text="${testRun.summary != null ? testRun.summary.totalTests : '0'}">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Passed</div>
+                            <div class="stat-value" style="color: var(--success-color);" th:text="${testRun.summary != null ? testRun.summary.passedTests : '0'}">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Failed</div>
+                            <div class="stat-value" style="color: var(--danger-color);" th:text="${testRun.summary != null ? testRun.summary.failedTests : '0'}">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Skipped</div>
+                            <div class="stat-value" style="color: var(--warning-color);" th:text="${testRun.summary != null ? testRun.summary.skippedTests : '0'}">0</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Pass Rate</div>
+                            <div class="stat-value" th:text="${testRun.summary != null ? #numbers.formatDecimal(testRun.summary.passRate, 1, 1) : '0'} + '%'">0%</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Duration</div>
+                            <div class="stat-value" th:text="${testRun.summary != null ? testRun.summary.totalDurationMs : '0'} + 'ms'">0ms</div>
+                        </div>
+                    </div>
+
+                    <!-- Test Run Details -->
+                    <div class="card" style="background-color: var(--gray-50); margin-top: 2rem;">
+                        <div class="card-header" style="font-size: 1rem; border-bottom: 1px solid var(--gray-200);">Run Details</div>
+                        <div class="card-body">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                                <div>
+                                    <div style="font-weight: 600; color: var(--gray-600); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px;">Project</div>
+                                    <div style="margin-top: 0.5rem; font-size: 1rem;" th:text="${testRun.project}"></div>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; color: var(--gray-600); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px;">Timestamp</div>
+                                    <div style="margin-top: 0.5rem; font-size: 1rem;" th:text="${testRun.timestamp}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Test Suites -->
+                    <div style="margin-top: 2rem;">
+                        <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">Test Suites</h2>
+                        <div th:if="${testRun.suites == null or testRun.suites.isEmpty()}" class="alert alert-info">
+                            <strong>No test suites found.</strong>
+                        </div>
+                        <div th:if="${testRun.suites != null and !testRun.suites.isEmpty()}">
+                            <div th:each="suite : ${testRun.suites}">
+                                <div th:replace="~{fragments/test-suite-row :: displaySuite(suite=${suite}, level=0)}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
+
