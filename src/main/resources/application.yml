@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: test-outcome-report
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/test-outcome
+      auto-index-creation: true
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+server:
+  port: 8080
+  servlet:
+    context-path: /test-outcome
+
+logging:
+  level:
+    root: INFO
+    com.eposide: DEBUG
+
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+      path: /swagger-ui-custom.html

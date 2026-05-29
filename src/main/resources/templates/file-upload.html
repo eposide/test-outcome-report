@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload Test Results</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}" />
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<script th:inline="javascript">
+
+    var baseUrl = /*[[@{/api/test-runs/upload}]]*/ '/api/test-runs/upload';
+
+    // submit the form to the upload endpoint and handle the response
+    // extract the form values and build the request json with the file as multipart form data
+    function submitForm() {
+        const request = {
+            framework : document.getElementById('framework').value,
+            project : document.getElementById('project').value,
+            branch : document.getElementById('branch').value,
+            commitId : document.getElementById('commitId').value,
+            environment : document.getElementById('environment').value,
+            source : document.getElementById('source').value,
+        };
+        const report = document.getElementById('report').files[0];
+        // call the upload endpoint with the the request json and the file as multipart form data
+
+        if (!report) {
+          alert('Please select a file');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
+        formData.append('report', report);
+
+        fetch(baseUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Upload successful!');
+            document.querySelector('form').reset();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Upload failed');
+        });
+
+     }
+</script>
+<main>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">Upload Test Results</div>
+            <div class="card-body">
+                <p>Upload your test results.</p>
+
+                <form onsubmit="submitForm(); return false;" enctype="multipart/form-data" style="margin-top: 2rem;">
+
+                    <div class="form-group">
+                        <label for="framework">Testing Framework <span style="...">*</span></label>
+                        <select class="form-control" id="framework" name="framework">
+                            <option value="">-- Select a framework --</option>
+                            <option th:each="framework : ${frameworks}" th:value="${framework}" th:text="${framework}"></option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project">Project Name <span style="color: var(--danger-color);">*</span></label>
+                        <input type="text" id="project" name="project" placeholder="e.g., My Test Suite" required />
+                        <small class="muted" style="display: block; margin-top: 0.5rem;">A descriptive name for this test run</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="branch">Branch Name</label>
+                        <input type="text" id="branch" name="branch" placeholder="e.g., main" />
+                        <small class="muted" style="display: block; margin-top: 0.5rem;">Optional branch or environment name</small>
+                    </div>
+
+                    <!--CommitId-->
+                    <div class="form-group">
+                        <label for="commitId">Commit ID</label>
+                        <input type="text" id="commitId" name="commitId" placeholder="e.g., abc1234" />
+                        <small class="muted" style="display: block; margin-top: 0.5rem;">Optional commit hash or build identifier</small>
+                    </div>
+
+                    <!--Environment-->
+                    <div class="form-group">
+                        <label for="environment">Environment</label>
+                        <input type="text" id="environment" name="environment" placeholder="e.g., staging" />
+                        <small class="muted" style="display: block; margin-top: 0.5rem;">Optional environment or configuration name</small>
+                    </div>
+                    <!--Source-->
+                    <div class="form-group">
+                        <label for="source">Source</label>
+                        <input type="text" id="source" name="source" placeholder="e.g., Jenkins, GitHub Actions" />
+                        <small class="muted" style="display: block; margin-top: 0.5rem;">Optional source or CI system name</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="report">Test Results File <span style="color: var(--danger-color);">*</span></label>
+                        <input type="file" id="report" name="report" accept=".xml,.json" required />
+                        <small class="muted" style="display: block; margin-top: 0.5rem;">Upload a JUnit XML or JSON test results file</small>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <span>⬆️</span> Upload Results
+                        </button>
+                        <button type="reset" class="btn btn-secondary">Clear</button>
+                    </div>
+                </form>
+
+                <div th:if="${message}" th:classappend="${messageType}" class="alert" style="margin-top: 1.5rem;">
+                    <th:block th:text="${message}"></th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
+

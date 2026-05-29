@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${title} ?: 'Test Outcome Report'">Test Outcome Report</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}" />
+    <th:block layout:fragment="additionalCSS"></th:block>
+</head>
+<body>
+    <header th:replace="fragments/header :: header"></header>
+
+    <main>
+        <div class="container" layout:fragment="content">
+            <!-- Content will be inserted here -->
+        </div>
+    </main>
+
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <th:block layout:fragment="additionalScripts"></th:block>
+</body>
+</html>
+
