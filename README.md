@@ -1,6 +1,10 @@
-# Test Outcome Report - Java Spring Boot
+# Test Outcome Report 
 
-A Spring Boot 4.0.6 application for managing and displaying test run results using Java 17 and Maven.
+An application for managing and displaying test run results from various testing frameworks. It provides a REST API for uploading test results and a user interface for viewing test run history and details.
+Currently supports Playwright JSON and XML formats, with a flexible architecture for adding new parsers as needed. 
+
+
+
 
 ## Prerequisites
 
