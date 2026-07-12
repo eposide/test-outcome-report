@@ -1,11 +1,12 @@
 package com.eposide.testoutcomereport.api;
 
-import com.eposide.testoutcomereport.domain.TestProject;
-import com.eposide.testoutcomereport.domain.TestRun;
+import com.eposide.testoutcomereport.domain.*;
 import com.eposide.testoutcomereport.parsers.ParserContext;
 import com.eposide.testoutcomereport.parsers.ParserRegistry;
 import com.eposide.testoutcomereport.repositories.ProjectRepository;
 import com.eposide.testoutcomereport.repositories.TestRunRepository;
+import com.eposide.testoutcomereport.service.OrganizationService;
+import com.eposide.testoutcomereport.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,20 +25,64 @@ public class UploadController {
     private final TestRunRepository testRunRepository;
     private final ProjectRepository projectRepository;
     private final ParserRegistry parserRegistry;
+    private final OrganizationService organizationService;
+    private final JwtUtil jwtUtil;
 
 
-    public UploadController(TestRunRepository testRunRepository, ProjectRepository projectRepository, ParserRegistry parserRegistry) {
+    public UploadController(TestRunRepository testRunRepository, ProjectRepository projectRepository, ParserRegistry parserRegistry, OrganizationService organizationService, JwtUtil jwtUtil) {
         this.testRunRepository = testRunRepository;
         this.projectRepository = projectRepository;
         this.parserRegistry = parserRegistry;
+        this.organizationService = organizationService;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping(value= "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadTestResults(@RequestPart UploadRequest request, @RequestPart MultipartFile report) {
+    public ResponseEntity<?> uploadTestResults(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestPart UploadRequest request, @RequestPart MultipartFile report) {
         try {
+            // Validate Bearer token
+            String token = jwtUtil.extractTokenFromHeader(authHeader);
+            if (token == null || !jwtUtil.isTokenValid(token)) {
+                return ResponseEntity.status(401).body(
+                        Map.of("error", "Missing or invalid Bearer token")
+                );
+            }
+
+            if (request.getOrganizationId() == null) {
+                return ResponseEntity.badRequest().body(
+                        Map.of("error", "organizationId is required")
+                );
+            }
+
+            if (!validateOrganizationId(request.getOrganizationId())) {
+                return ResponseEntity.status(403).body(
+                        Map.of("error", "Invalid organizationId")
+                );
+            }
+
             if (request.getFramework() == null) {
                 return ResponseEntity.badRequest().body(
                         Map.of("error", "framework is required")
+                );
+            }
+
+            if (request.getFormat() == null) {
+                return ResponseEntity.badRequest().body(
+                        Map.of("error", "format is required")
+                );
+            }
+
+            ParserFormat requestFormat = null;
+
+            try {
+
+
+               requestFormat =  ParserFormat.valueOf(request.getFormat());
+
+            } catch (IllegalArgumentException e) {
+                log.warn("Invalid format: {}", request.getFormat());
+                return ResponseEntity.badRequest().body(
+                        Map.of("error", "format is not valid")
                 );
             }
 
@@ -50,12 +95,14 @@ public class UploadController {
             // Build context
             ParserContext context = new ParserContext();
             context.setFramework(request.getFramework());
+            context.setFormat(requestFormat);
             context.setProject(request.getProject());
             context.setBranch(request.getBranch());
             context.setCommitId(request.getCommitId());
             context.setEnvironment(request.getEnvironment());
             context.setSource(request.getSource());
             context.setFileName(report.getOriginalFilename());
+            context.setOrganizationId(request.getOrganizationId());
 
             String runId = processUpload(reportContent, context);
 
@@ -71,6 +118,23 @@ public class UploadController {
         }
     }
 
+    private boolean validateOrganizationId(String organizationId) {
+
+        Organization org = organizationService.getOrganization(organizationId);
+
+        if (org == null) {
+            log.warn("Invalid organizationId: {}", organizationId);
+            return false;
+        }
+
+        if (OrganizationStatus.ACTIVE != org.getStatus()) {
+            log.warn("Organization is not active: {}", organizationId);
+            return false;
+        }
+
+        return true;
+    }
+
     private String processUpload(String reportContent, ParserContext context) throws Exception {
         // Parse into domain model
         TestRun testRun = parserRegistry.parseTestResults(reportContent, context);
@@ -79,10 +143,11 @@ public class UploadController {
         testRunRepository.save(testRun);
 
         TestProject testProject = new TestProject();
-        testProject.setProjectName(testRun.getProject());
+        testProject.setName(testRun.getProject());
+        testProject.setOrganizationId(context.getOrganizationId());
 
         // Check if the project already exists in the database, if not save it
-        List<TestProject> existingProjects = projectRepository.findByProjectName(testRun.getProject());
+        List<TestProject> existingProjects = projectRepository.findByName(testRun.getProject());
         if (existingProjects == null || existingProjects.isEmpty()) {
             projectRepository.save(testProject);
         }

@@ -64,6 +64,19 @@
                                     <div style="font-weight: 600; color: var(--gray-600); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px;">Timestamp</div>
                                     <div style="margin-top: 0.5rem; font-size: 1rem;" th:text="${testRun.timestamp}"></div>
                                 </div>
+                                <div>
+                                    <div style="...">Branch</div>
+                                    <div style="..." th:text="${testRun.branch != null ? testRun.branch : 'N/A'}"></div>
+                                </div>
+                                <div>
+                                    <div style="...">Commit ID</div>
+                                    <div style="..." th:text="${testRun.commitId != null ? testRun.commitId : 'N/A'}"></div>
+                                </div>
+                                <div>
+                                    <div style="...">Environment</div>
+                                    <div style="..." th:text="${testRun.environment != null ? testRun.environment : 'N/A'}"></div>
+                                </div>
+
                             </div>
                         </div>
                     </div>

@@ -17,6 +17,14 @@
             <a th:href="@{/}" title="Dashboard">Dashboard</a>
             <a th:href="@{/test-history/}" title="Test History">Test History</a>
             <a th:href="@{/file-upload}" title="Upload">Upload</a>
+            <!-- if the current user has an admin role then show the admin link -->
+            <a th:if="${currentUser != null and currentUser.roles.contains(T(com.eposide.testoutcomereport.domain.UserRoles).SUPER_ADMIN)}" th:href="@{/admin/organizations}" title="Admin">Admin</a>
+            <!-- TODO if the current user is logged in then show the profile icon with a link to the user profile page and a logout link -->
+            <a th:if="${currentUser != null}" th:href="@{/profile}" title="Profile" th:text="${currentUser.username}">Profile</a>
+            <a th:if="${currentUser != null}" th:href="@{/logout}" title="Logout">Logout</a>
+            <!-- if the current user is not logged in then show the login link -->
+            <a th:if="${currentUser == null}" th:href="@{/login}" title="Login">Login</a>
+
         </nav>
     </div>
 </header>

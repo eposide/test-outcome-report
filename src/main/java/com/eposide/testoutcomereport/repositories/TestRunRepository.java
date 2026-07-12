@@ -15,4 +15,10 @@ public interface TestRunRepository extends MongoRepository<TestRun, String> {
     List<TestRun> findByProjectOrderByTimestampDesc(String project);
     List<TestRun> findByTimestampBetween(LocalDateTime start, LocalDateTime end);
     List<TestRun> findByFramework(String framework);
+
+    // Organization-based queries
+    List<TestRun> findByOrganizationIdOrderByTimestampDesc(String organizationId);
+    List<TestRun> findByOrganizationId(String organizationId);
+    List<TestRun> findByOrganizationIdAndProjectOrderByTimestampDesc(String organizationId, String project);
+    List<TestRun> findByOrganizationIdAndProject(String organizationId, String project);
 }

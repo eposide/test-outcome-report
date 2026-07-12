@@ -1,9 +1,11 @@
 package com.eposide.testoutcomereport.parsers;
 
+import com.eposide.testoutcomereport.domain.ParserFormat;
 import com.eposide.testoutcomereport.domain.TestRun;
 import com.eposide.testoutcomereport.domain.TestStatus;
-import com.eposide.testoutcomereport.parsers.playwright.PlaywrightJsonParser;
-import com.eposide.testoutcomereport.parsers.playwright.PlaywrightXmlParser;
+import com.eposide.testoutcomereport.parsers.playwright.PlaywrightJsonReader;
+import com.eposide.testoutcomereport.parsers.playwright.PlaywrightParser;
+import com.eposide.testoutcomereport.parsers.playwright.PlaywrightXmlReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,34 +14,35 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParserRegistryTest {
 
     private ParserRegistry parserRegistry;
-    private PlaywrightJsonParser playwrightJsonParser;
-    private PlaywrightXmlParser playwrightXmlParser;
+    private PlaywrightParser playwrightParser;
 
     @BeforeEach
     void setUp() {
-        playwrightJsonParser = new PlaywrightJsonParser();
-        playwrightXmlParser = new PlaywrightXmlParser();
-        parserRegistry = new ParserRegistry(java.util.List.of(playwrightJsonParser, playwrightXmlParser));
+        playwrightParser = new PlaywrightParser();
+
+        parserRegistry = new ParserRegistry(java.util.List.of(playwrightParser));
     }
 
     @Test
-    void testResolvePlaywrightJsonParser() {
+    void testResolvePlaywrightJsonReader() {
         ParserContext context = new ParserContext();
-        context.setFramework("playwright-json");
+        context.setFramework("playwright");
+        context.setFormat(ParserFormat.JSON);
 
         TestResultParser parser = parserRegistry.resolve(context);
         assertNotNull(parser);
-        assertTrue(parser instanceof PlaywrightJsonParser);
+        assertTrue(parser instanceof PlaywrightParser);
     }
 
     @Test
     void testResolvePlaywrightXmlParser() {
         ParserContext context = new ParserContext();
-        context.setFramework("playwright-xml");
+        context.setFramework("playwright");
+        context.setFormat(ParserFormat.XML);
 
         TestResultParser parser = parserRegistry.resolve(context);
         assertNotNull(parser);
-        assertTrue(parser instanceof PlaywrightXmlParser);
+        assertTrue(parser instanceof PlaywrightParser);
     }
 
     @Test
@@ -84,7 +87,8 @@ class ParserRegistryTest {
                 """;
 
         ParserContext context = new ParserContext();
-        context.setFramework("playwright-json");
+        context.setFramework("playwright");
+        context.setFormat(ParserFormat.JSON);
         context.setProject("test-project");
         context.setBranch("main");
 
@@ -134,7 +138,8 @@ class ParserRegistryTest {
                 """;
 
         ParserContext context = new ParserContext();
-        context.setFramework("playwright-xml");
+        context.setFramework("playwright");
+        context.setFormat(ParserFormat.XML);
         context.setProject("test-project");
         context.setBranch("main");
 

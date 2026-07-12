@@ -9,6 +9,11 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
+  session:
+    store-type: mongodb
+    mongodb:
+      collection-name: sessions
+    timeout: 1800 # 30 minutes in seconds
 
 server:
   port: 8080
@@ -20,6 +25,9 @@ logging:
     root: INFO
     com.eposide: DEBUG
 
+jwt:
+  secret: your-super-secret-jwt-key-change-this-in-production-min-256-chars-long-xxxxxxxxxxx
+  expiration: 86400000
 
 springdoc:
   api-docs:

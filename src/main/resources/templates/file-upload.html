@@ -11,13 +11,39 @@
 
 <script th:inline="javascript">
 
-    var baseUrl = /*[[@{/api/test-runs/upload}]]*/ '/api/test-runs/upload';
+    var getTokenUrl = /*[[@{/api/auth/token}]]*/ '/api/auth/token';
+    var uploadBaseUrl = /*[[@{/api/test-runs/upload}]]*/ '/api/test-runs/upload';
+    var organizationId = /*[[${currentUser != null} ? ${currentUser.organizationId} : 'null']]*/ null;
+
+// Get token when page loads
+   document.addEventListener('DOMContentLoaded', async function() {
+      try {
+           const response = await fetch(getTokenUrl);
+
+           if (response.ok) {
+              const data = await response.json();
+               // Store token in sessionStorage
+               sessionStorage.setItem('jwtToken', data.token);
+               console.log('JWT token obtained for user:', data.username);
+           } else {
+               console.error('Failed to get token');
+           }
+      } catch (error) {
+         console.error('Error getting token:', error);
+      }
+    });
+
+
 
     // submit the form to the upload endpoint and handle the response
     // extract the form values and build the request json with the file as multipart form data
     function submitForm() {
+
+        const token = sessionStorage.getItem('jwtToken');
         const request = {
+            organizationId : organizationId,
             framework : document.getElementById('framework').value,
+            format : document.getElementById('format').value,
             project : document.getElementById('project').value,
             branch : document.getElementById('branch').value,
             commitId : document.getElementById('commitId').value,
@@ -36,13 +62,25 @@
         formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
         formData.append('report', report);
 
-        fetch(baseUrl, {
+        fetch(uploadBaseUrl, {
             method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
             body: formData
         })
         .then(response => response.json())
         .then(data => {
-            alert('Upload successful!');
+            // if the response contains an error show that
+            if (data.error) {
+                console.error('Error:', data.error);
+                alert(`Upload failed: ${data.error}`);
+                return;
+            }
+            let runId = data.id ? `Run ID: ${data.id}` : '';
+            let message = data.message ? data.message : 'Upload successful!';
+
+            alert(message + ' ' + runId);
             document.querySelector('form').reset();
         })
         .catch(error => {
@@ -66,6 +104,16 @@
                         <select class="form-control" id="framework" name="framework">
                             <option value="">-- Select a framework --</option>
                             <option th:each="framework : ${frameworks}" th:value="${framework}" th:text="${framework}"></option>
+                        </select>
+
+                    </div>
+
+                    <!-- format of the upload file -->
+                    <div class="form-group">
+                        <label for="format">Testing Format <span style="...">*</span></label>
+                        <select class="form-control" id="format" name="format">
+                            <option value="">-- Select a format --</option>
+                            <option th:each="format : ${formats}" th:value="${format}" th:text="${format}"></option>
                         </select>
                     </div>
 

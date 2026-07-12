@@ -1,54 +1,35 @@
 package com.eposide.testoutcomereport.parsers.playwright;
 
-import com.eposide.testoutcomereport.domain.*;
+import com.eposide.testoutcomereport.domain.TestCase;
+import com.eposide.testoutcomereport.domain.TestRun;
+import com.eposide.testoutcomereport.domain.TestStatus;
+import com.eposide.testoutcomereport.domain.TestSuite;
 import com.eposide.testoutcomereport.parsers.ParserContext;
-import com.eposide.testoutcomereport.parsers.SuiteUtil;
+import com.eposide.testoutcomereport.parsers.ParserUtil;
 import com.eposide.testoutcomereport.parsers.TestResultParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Component
-public class PlaywrightJsonParser implements TestResultParser {
-    private static final String FRAMEWORK_NAME = "playwright-json";
+public class PlaywrightJsonReader  {
+
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Override
-    public String getFrameworkName() {
-        return FRAMEWORK_NAME;
-    }
 
-    @Override
-    public boolean supports(ParserContext context) {
-        return FRAMEWORK_NAME.equalsIgnoreCase(context.getFramework());
-    }
+    public List<TestSuite> readSuites(String payload) throws IOException {
 
-    @Override
-    public TestRun parse(String payload, ParserContext context) throws Exception {
         JsonNode rootNode = null;
 
         rootNode = objectMapper.readTree(payload.getBytes());
 
-        List<TestSuite> suites = extractSuites(rootNode.get("suites"));
-
-        TestRun testRun = new TestRun();
-        testRun.setId(UUID.randomUUID().toString());
-        testRun.setProject(context.getProject() != null ? context.getProject() : "unknown");
-        testRun.setBranch(context.getBranch());
-        testRun.setCommitId(context.getCommitId());
-        testRun.setEnvironment(context.getEnvironment());
-        testRun.setSource(context.getSource());
-        testRun.setFramework("playwright");
-        testRun.setTimestamp(LocalDateTime.now());
-        testRun.setSuites(suites);
-
-        testRun.setSummary(SuiteUtil.getSummary(suites));
-        return testRun;
+        return extractSuites(rootNode);
     }
 
 
@@ -59,8 +40,16 @@ public class PlaywrightJsonParser implements TestResultParser {
             return result;
         }
 
-        for (JsonNode suiteNode : suitesNode) {
-            walkSuite(suiteNode, result, null);
+        JsonNode suitesArray = suitesNode.get("suites");
+        if (suitesArray != null) {
+            if (suitesArray.isArray()) {
+                for (JsonNode suiteNode : suitesArray) {
+                    walkSuite(suiteNode, result, null);
+                }
+            } else {
+                // Single testsuite
+                walkSuite(suitesArray, result, null);
+            }
         }
 
         return result;

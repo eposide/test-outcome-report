@@ -3,8 +3,18 @@
 An application for managing and displaying test run results from various testing frameworks. It provides a REST API for uploading test results and a user interface for viewing test run history and details.
 Currently supports Playwright JSON and XML formats, with a flexible architecture for adding new parsers as needed. 
 
+## 🆕 Now with Organization Segregation & Authentication!
 
+This application now includes complete user authentication with BCrypt password hashing, organization-level data segregation, and role-based access control.
 
+**New Features:**
+- ✅ User login with BCrypt password hashing
+- ✅ User and organization registration
+- ✅ Organization-level data segregation
+- ✅ Role-based access control (SUPER_ADMIN, ADMIN, USER, VIEWER)
+- ✅ Session management with MongoDB backend
+- ✅ Dashboard filtered by organization
+- ✅ Test history filtered by organization
 
 ## Prerequisites
 

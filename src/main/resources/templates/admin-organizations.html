@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizations - Test Outcome Report</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}"/>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+<script th:inline="javascript">
+    var baseUrl = /*[[@{/admin/organization/users/}]]*/ '/admin/organization/users/';
+    function rowClicked(id) {
+        location.href = baseUrl + id;
+    }
+</script>
+<main>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">Registered Organizations</div>
+            <div class="card-body">
+                <div th:if="${organizations == null or organizations.isEmpty()}" class="alert alert-info">
+                    <strong>No organizations found.</strong> Register an organization.
+                </div>
+                <div th:if="${organizations != null and !organizations.isEmpty()}">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Contact Person</th>
+                            <th>Email</th>
+                            <th>Contact Number</th>
+                            <th>Status</th>
+                            <th>Id</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="org : ${organizations}" th:data-id="${org.id}" onclick="rowClicked(this.getAttribute('data-id'))" style="cursor: pointer;">
+                            <td th:text="${org.name}"></td>
+                            <td th:text="${org.contactName}"></td>
+                            <td th:text="${org.contactEmail}"></td>
+                            <td th:text="${org.contactPhone}"></td>
+                            <td th:text="${org.status}"></td>
+                            <td th:text="${org.id}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
+

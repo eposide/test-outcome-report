@@ -17,6 +17,7 @@ import java.util.Map;
 public class TestRun {
     @Id
     private String id;
+    private String organizationId;
     private String project;
     private String branch;
     private String commitId;
@@ -24,6 +25,7 @@ public class TestRun {
     private String source; // e.g., jenkins, github-actions
     private String framework; // e.g., playwright, junit
     private LocalDateTime timestamp;
+    private String createdBy; // userId of the user who uploaded the test run
     private List<TestSuite> suites;
     private TestSummary summary;
     private Map<String, Object> metadata;

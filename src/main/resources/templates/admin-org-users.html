@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Organization - Test Outcome Report</title>
+    <link rel="stylesheet" th:href="@{/css/theme.css}"/>
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">Users for Organization <span th:text="${organization.name}"></span></div>
+            <div class="card-body">
+                <div th:if="${users == null or users.isEmpty()}" class="alert alert-info">
+                    <strong>No users found.</strong> Add users to the organization.
+                </div>
+                <!-- add a new user -->
+                <a th:href="@{/admin/user-register}" class="btn btn-primary">Add User</a>
+                <div th:if="${users != null and !users.isEmpty()}">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Roles</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user : ${users}">
+                            <td th:text="${user.name}"></td>
+                            <td th:text="${user.roles}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
+

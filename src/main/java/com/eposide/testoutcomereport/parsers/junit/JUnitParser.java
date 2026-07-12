@@ -1,53 +1,61 @@
-package com.eposide.testoutcomereport.parsers.playwright;
+package com.eposide.testoutcomereport.parsers.junit;
 
-import com.eposide.testoutcomereport.domain.TestCase;
-import com.eposide.testoutcomereport.domain.TestRun;
-import com.eposide.testoutcomereport.domain.TestStatus;
-import com.eposide.testoutcomereport.domain.TestSuite;
+import com.eposide.testoutcomereport.domain.*;
 import com.eposide.testoutcomereport.parsers.ParserContext;
-import com.eposide.testoutcomereport.parsers.SuiteUtil;
+import com.eposide.testoutcomereport.parsers.ParserUtil;
 import com.eposide.testoutcomereport.parsers.TestResultParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
+@Slf4j
 @Component
-public class PlaywrightXmlParser implements TestResultParser {
-    private final XmlMapper xmlMapper = new XmlMapper();
-    private static final String FRAMEWORK_NAME = "playwright-xml";
+public class JUnitParser implements TestResultParser {
 
+    private final XmlMapper xmlMapper = new XmlMapper();
+    private static final String FRAMEWORK_NAME = "junit";
+    private static final List<ParserFormat> SUPPORTED_FORMATS = new ArrayList<>(List.of(ParserFormat.XML));
     @Override
     public String getFrameworkName() {
         return FRAMEWORK_NAME;
     }
 
     @Override
+    public List<ParserFormat> getFormats() {
+        return SUPPORTED_FORMATS;
+    }
+
+    @Override
     public boolean supports(ParserContext context) {
-        return FRAMEWORK_NAME.equalsIgnoreCase(context.getFramework());
+
+        if (context == null) {
+            return false;
+        }
+        if (context.getFramework() == null) {
+            return false;
+        }
+        if (context.getFormat() == null) {
+            return false;
+        }
+
+        return context.getFramework().equals(FRAMEWORK_NAME) && SUPPORTED_FORMATS.contains(context.getFormat());
+
     }
 
     @Override
     public TestRun parse(String payload, ParserContext context) throws Exception {
+
+        //Only supports XML no need to check format for now
         JsonNode rootNode = xmlMapper.readTree(payload.getBytes());
 
         List<TestSuite> suites = extractTestSuites(rootNode);
 
-        TestRun testRun = new TestRun();
-        testRun.setId(UUID.randomUUID().toString());
-        testRun.setProject(context.getProject() != null ? context.getProject() : "unknown");
-        testRun.setBranch(context.getBranch());
-        testRun.setCommitId(context.getCommitId());
-        testRun.setEnvironment(context.getEnvironment());
-        testRun.setSource(context.getSource());
-        testRun.setFramework("playwright");
-        testRun.setTimestamp(LocalDateTime.now());
-        testRun.setSuites(suites);
-        testRun.setSummary(SuiteUtil.getSummary(suites));
+        TestRun testRun = ParserUtil.buildTestRun(suites, context);
+        testRun.setFramework("junit");
 
         return testRun;
     }
@@ -68,6 +76,11 @@ public class PlaywrightXmlParser implements TestResultParser {
             } else {
                 // Single testsuite
                 walkSuite(suitesArray, result, null);
+            }
+        } else {
+            // Handle case where root is a single testsuite
+            if (testSuitesNode.has("name") && testSuitesNode.has("testcase")) {
+                walkSuite(testSuitesNode, result, null);
             }
         }
 
