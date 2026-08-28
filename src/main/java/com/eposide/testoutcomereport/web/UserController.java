@@ -5,6 +5,7 @@ import com.eposide.testoutcomereport.domain.Organization;
 import com.eposide.testoutcomereport.domain.User;
 import com.eposide.testoutcomereport.repositories.OrganizationRepository;
 import com.eposide.testoutcomereport.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
@@ -46,6 +47,13 @@ public class UserController {
         return "login";
     }
 
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login?logout";
+    }
+
+
 
     @PostMapping("/reset-password")
     public String resetPassword(@RequestParam String password, @RequestParam String confirmPassword, Model model) {
@@ -62,6 +70,7 @@ public class UserController {
             }
             if (!password.equals(confirmPassword)) {
                 model.addAttribute("error", "Passwords do not match");
+                return "reset-password";
             }
 
             userService.resetPassword(username, password);

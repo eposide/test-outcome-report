@@ -9,17 +9,18 @@
     <th:block layout:fragment="additionalCSS"></th:block>
 </head>
 <body>
-    <header th:replace="fragments/header :: header"></header>
+<header th:replace="fragments/header :: header"></header>
 
-    <main>
-        <div class="container" layout:fragment="content">
-            <!-- Content will be inserted here -->
-        </div>
-    </main>
+<main>
+    <div class="container" layout:fragment="content">
+        <!-- Content will be inserted here -->
+    </div>
+</main>
 
-    <footer th:replace="fragments/footer :: footer"></footer>
+<footer th:replace="fragments/footer :: footer"></footer>
 
-    <th:block layout:fragment="additionalScripts"></th:block>
+<th:block layout:fragment="additionalScripts"></th:block>
+
+<script th:src="@{/js/user-menu.js}"></script>
 </body>
 </html>
-

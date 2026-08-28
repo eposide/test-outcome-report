@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title th:text="${title} ?: 'Test Outcome Report'">Test Outcome Report</title>
-    <link rel="stylesheet" th:href="@{/css/theme.css}" />
-</head>
-<body>
-<header th:fragment="header">
+<header th:fragment="header" xmlns:th="http://www.thymeleaf.org">
     <div class="container">
         <div>
             <h1>Test Outcome Report</h1>
@@ -17,17 +8,20 @@
             <a th:href="@{/}" title="Dashboard">Dashboard</a>
             <a th:href="@{/test-history/}" title="Test History">Test History</a>
             <a th:href="@{/file-upload}" title="Upload">Upload</a>
-            <!-- if the current user has an admin role then show the admin link -->
             <a th:if="${currentUser != null and currentUser.roles.contains(T(com.eposide.testoutcomereport.domain.UserRoles).SUPER_ADMIN)}" th:href="@{/admin/organizations}" title="Admin">Admin</a>
-            <!-- TODO if the current user is logged in then show the profile icon with a link to the user profile page and a logout link -->
-            <a th:if="${currentUser != null}" th:href="@{/profile}" title="Profile" th:text="${currentUser.username}">Profile</a>
-            <a th:if="${currentUser != null}" th:href="@{/logout}" title="Logout">Logout</a>
-            <!-- if the current user is not logged in then show the login link -->
+            <div th:if="${currentUser != null}" class="user-menu" id="userMenu">
+                <button type="button" class="user-menu-button" id="userMenuButton" aria-haspopup="true" aria-expanded="false" title="User menu">
+                    <span class="profile-icon">👤</span>
+                </button>
+                <div class="user-menu-dropdown" id="userMenuDropdown">
+                    <div class="user-menu-username">
+                        <span th:text="${currentUser.username}">Username</span>
+                    </div>
+                    <a class="user-menu-item" th:href="@{/profile}" title="Profile">Profile</a>
+                    <a class="user-menu-item" th:href="@{/logout}" title="Logout">Logout</a>
+                </div>
+            </div>
             <a th:if="${currentUser == null}" th:href="@{/login}" title="Login">Login</a>
-
         </nav>
     </div>
 </header>
-</body>
-</html>
-

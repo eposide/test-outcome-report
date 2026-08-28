@@ -16,7 +16,12 @@ import java.util.List;
 @Component
 public class JUnitParser implements TestResultParser {
 
-    private final XmlMapper xmlMapper = new XmlMapper();
+    private final XmlMapper xmlMapper;
+
+    public JUnitParser() {
+        this.xmlMapper = new XmlMapper();
+    }
+
     private static final String FRAMEWORK_NAME = "junit";
     private static final List<ParserFormat> SUPPORTED_FORMATS = new ArrayList<>(List.of(ParserFormat.XML));
     @Override

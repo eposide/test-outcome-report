@@ -17,7 +17,12 @@ import java.util.List;
 
 @Component
 public class PlaywrightXmlReader  {
-    private final XmlMapper xmlMapper = new XmlMapper();
+    private final XmlMapper xmlMapper;
+
+    public PlaywrightXmlReader() {
+        this.xmlMapper = new XmlMapper();
+    }
+
     private static final String FRAMEWORK_NAME = "playwright-xml";
 
     public List<TestSuite> readSuites(String payload) throws IOException {

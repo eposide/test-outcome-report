@@ -40,6 +40,28 @@ public class UploadController {
     @PostMapping(value= "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadTestResults(@RequestHeader(value = "Authorization", required = false) String authHeader, @RequestPart UploadRequest request, @RequestPart MultipartFile report) {
         try {
+            // Validate file
+            if (report.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                        Map.of("error", "Report file is required")
+                );
+            }
+
+            // Validate file size (50MB limit)
+            if (report.getSize() > 52428800) { // 50MB in bytes
+                return ResponseEntity.status(413).body(
+                        Map.of("error", "File size exceeds maximum allowed size (50MB)")
+                );
+            }
+
+            // Validate file type
+            String filename = report.getOriginalFilename();
+            if (filename == null || !isAllowedFileType(filename)) {
+                return ResponseEntity.badRequest().body(
+                        Map.of("error", "File type not allowed. Only JSON and XML files are supported")
+                );
+            }
+
             // Validate Bearer token
             String token = jwtUtil.extractTokenFromHeader(authHeader);
             if (token == null || !jwtUtil.isTokenValid(token)) {
@@ -155,6 +177,11 @@ public class UploadController {
         log.info("Test run saved: {} for project: {}", testRun.getId(), testRun.getProject());
 
         return testRun.getId();
+    }
+
+    private boolean isAllowedFileType(String filename) {
+        String lowerFilename = filename.toLowerCase();
+        return lowerFilename.endsWith(".json") || lowerFilename.endsWith(".xml");
     }
 
 }

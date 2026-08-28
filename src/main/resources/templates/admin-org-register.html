@@ -157,6 +157,7 @@
         </div>
 
         <form method="post" th:action="@{/admin/org-register}">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <div class="form-group">
                 <label for="name">Organization Name *</label>
                 <input type="text" id="name" name="name" required autofocus>
