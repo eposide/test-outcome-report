@@ -95,7 +95,8 @@ spring:
 ```
 
 ## API Endpoints
-
+### Swagger UI
+The API documentation is available at `http://localhost:8080/test-outcome/swagger-ui/index.html` after starting
 ### Upload Test Results
 
 **POST** `/api/test-runs/upload`

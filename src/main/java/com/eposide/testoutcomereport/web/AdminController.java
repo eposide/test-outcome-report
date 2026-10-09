@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -40,7 +39,7 @@ public class AdminController {
             return "redirect:/login";
         }
 
-        addCurrentUser(model);
+        addLoggedInUserToModel(model);
 
         // List the organizations
         model.addAttribute("organizations", organizationService.getAllOrganizations());
@@ -58,7 +57,7 @@ public class AdminController {
             return "admin-organizations";
         }
 
-        addCurrentUser(model);
+        addLoggedInUserToModel(model);
         model.addAttribute("users", userService.getUsersByOrganization(organizationId));
         model.addAttribute("organization",  organizationService.getOrganization(organizationId));
         return "admin-org-users";
@@ -67,13 +66,13 @@ public class AdminController {
     /**
      * Display organization registration page (super-user only)
      */
-    @GetMapping("/admin/org-register")
+    @GetMapping("/admin/organization/register")
     public String adminOrgRegisterPage(Model model) {
         if (!isAdmin()) {
             return "redirect:/login";
         }
 
-        addCurrentUser(model);
+        addLoggedInUserToModel(model);
         return "admin-org-register";
     }
 
@@ -100,7 +99,7 @@ public class AdminController {
 
             // Register organization
             Organization org = organizationService.registerOrganization(name, description, contactName, contactEmail, contactPhone);
-            addCurrentUser(model);
+            addLoggedInUserToModel(model);
             model.addAttribute("success", "Organization registered successfully! ID: " + org.getId());
             return "admin-org-register";
 
@@ -115,7 +114,7 @@ public class AdminController {
      * Display user registration page
      */
     @GetMapping("/admin/user-register")
-    public String registerPage(@RequestParam String organizationId, Model model) {
+    public String registerUserPage(@RequestParam String organizationId, Model model) {
 
         model.addAttribute("organizationId", organizationId);
         return ADMIN_USER_REGISTER;
@@ -179,7 +178,7 @@ public class AdminController {
 
     }
 
-    private void addCurrentUser(Model model) {
+    private void addLoggedInUserToModel(Model model) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

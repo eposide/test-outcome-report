@@ -1,40 +1,57 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:7.0
     container_name: test-outcome-report-mongo
+    hostname: mongodb
     restart: unless-stopped
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_DATABASE: test-outcome-report
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: changeme
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_DATABASE_NAME}
     volumes:
       - mongodb_data:/data/db
       - mongodb_config:/data/configdb
     networks:
       - test-outcome-report-network
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "-u", "${DB_USERNAME}", "-p", "${DB_PASSWORD}", "--authenticationDatabase", "admin"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: test-outcome-report-api
+    container_name: test-outcome-report-app
     restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATA_MONGODB_URI: mongodb://root:changeme@mongodb:27017/test-outcome-report?authSource=admin
+      DB_HOST: mongodb
+      DB_PORT: 27017
+      DB_DATABASE_NAME: ${DB_DATABASE_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_AUTHENTICATION_DATABASE: admin
+      SPRING_SESSION_STORE_TYPE: none
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      INITIAL_ORGANIZATION_NAME: ${INITIAL_ORGANIZATION_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
     depends_on:
       mongodb:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/test-outcome/actuator/health" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     networks:
       - test-outcome-report-network
 

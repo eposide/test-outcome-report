@@ -138,7 +138,7 @@
             <strong>Success:</strong> <span th:text="${success}"></span>
         </div>
 
-        <form method="post" th:action="@{/register}">
+        <form method="post" th:action="@{/admin/user-register}">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
             <div class="form-group">
                 <label for="username">Username</label>
@@ -157,7 +157,7 @@
 
             <div class="form-group">
                 <label for="organizationId">Organization</label>
-                <input id="organizationId" name="organizationId" readonly th:value="${organization.id}">
+                <input id="organizationId" name="organizationId" readonly th:value="${organizationId}">
             </div>
 
             <button type="submit" class="btn-register">Register</button>

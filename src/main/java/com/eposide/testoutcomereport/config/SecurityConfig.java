@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
@@ -62,14 +63,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/**")
+                        .csrfTokenRepository(new HttpSessionCsrfTokenRepository())
+                )
                 .authorizeHttpRequests(authz -> authz
                         // Allow public access to login, register, and health endpoints
                         .requestMatchers("/login", "/register").permitAll()
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api-docs/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/actuator/health/**", "/actuator/health").permitAll()
                         // All other requests require authentication
                         .anyRequest().authenticated()
                 )
+
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(form -> form
                         .loginPage("/login")

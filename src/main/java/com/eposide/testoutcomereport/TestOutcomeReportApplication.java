@@ -11,5 +11,5 @@ public class TestOutcomeReportApplication {
     public static void main(String[] args) {
         SpringApplication.run(TestOutcomeReportApplication.class, args);
     }
-
 }
+

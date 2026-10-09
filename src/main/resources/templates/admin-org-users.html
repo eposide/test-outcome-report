@@ -17,8 +17,8 @@
                 <div th:if="${users == null or users.isEmpty()}" class="alert alert-info">
                     <strong>No users found.</strong> Add users to the organization.
                 </div>
-                <!-- add a new user -->
-                <a th:href="@{/admin/user-register}" class="btn btn-primary">Add User</a>
+                <!-- add a new user passing the organization ID -->
+                <a th:href="@{/admin/user-register(organizationId=${organization.id})}" class="btn btn-primary">Add User</a>
                 <div th:if="${users != null and !users.isEmpty()}">
                     <table>
                         <thead>
@@ -29,7 +29,7 @@
                         </thead>
                         <tbody>
                         <tr th:each="user : ${users}">
-                            <td th:text="${user.name}"></td>
+                            <td th:text="${user.username}"></td>
                             <td th:text="${user.roles}"></td>
                         </tr>
                         </tbody>

@@ -4,11 +4,11 @@ $uploadApiUrl = "http://localhost:8080/test-outcome/api/test-runs/upload"
 $authApiUrl = "http://localhost:8080/test-outcome/api/auth/login"
 
 # Credentials for API authentication
-$username = "frik"
+$username = "testers_service"
 $password = "Password1"
 
 # Metadata
-$organizationId = "6a226bae704ada3e7cc8ba49"
+$organizationId = "6ac7a45178e24d7241dc0c3b"
 $framework = "playwright"
 $format = "JSON"
 $project = "playwright-sample-json"

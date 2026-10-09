@@ -22,6 +22,7 @@
                 <div th:if="${organizations == null or organizations.isEmpty()}" class="alert alert-info">
                     <strong>No organizations found.</strong> Register an organization.
                 </div>
+                <a th:href="@{/admin/organization/register}" class="btn btn-primary">Register Organization</a>
                 <div th:if="${organizations != null and !organizations.isEmpty()}">
                     <table>
                         <thead>
